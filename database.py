@@ -7,9 +7,9 @@ class Database:
     def __init__(self):
         try:
             self.client = MongoClient(os.environ["database-connection-string"], server_api=ServerApi('1'))
-            self.database = self.client.get_database("HooHacks2025")
+            self.database = self.client.get_database("main")
         except Exception as e:
-            print(f"Error connecting to MongoDB: {e}")
+            print(f"---ERROR--- Failed to connect to MongoDB: {e}")
             self.client = None
             self.database = None
 
@@ -20,4 +20,4 @@ class Database:
             self.client.admin.command('ping')
             return "Database connection successful!"
         except ConnectionFailure as e:
-            return f"Database connection failed: {e}"
+            return f"---ERROR--- Database connection failed: {e}"
