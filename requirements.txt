@@ -11,3 +11,5 @@ requests
 typing-extensions
 ipython
 markdown
+re 
+textwrap
