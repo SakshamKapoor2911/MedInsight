@@ -1,20 +1,24 @@
-import { StaticImageData } from 'next/image';
-
 export interface Message {
   role: "user" | "assistant";
   content: string;
-  suggestions?: string[];
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  lastMessage: string;
+  date: Date;
+  messages: Message[];
 }
 
 export interface SymptomAnalysis {
   severity: "low" | "moderate" | "high";
   recommendations: string[];
   suggestedSpecialists: string[];
-  medicalChart?: MedicalChart;
-  emergencyInfo?: EmergencyInfo;
+  nearbyFacilities: EmergencyFacility[];
 }
 
-export interface DoctorMatch {
+export interface Doctor {
   name: string;
   email: string;
   phone: string;
@@ -22,44 +26,11 @@ export interface DoctorMatch {
   address: string;
 }
 
-export interface MedicalChart {
-  chiefComplaint: string;
-  historyOfPresentIllness: string;
-  pastMedicalHistory: string;
-  medications: string[];
-  allergies: string[];
-  vitalSigns?: {
-    temperature?: string;
-    bloodPressure?: string;
-    heartRate?: string;
-    respiratoryRate?: string;
-  };
-  assessment: string;
-  plan: string;
-  followUpInstructions: string;
-}
-
-export interface EmergencyInfo {
-  nearbyFacilities: EmergencyFacility[];
-  emergencyContacts: EmergencyContact[];
-  firstAidSteps?: string[];
-}
-
 export interface EmergencyFacility {
   name: string;
   type: "hospital" | "urgentCare" | "clinic";
-  distance: string;
   address: string;
   phone: string;
-  waitTime?: string;
-  openNow: boolean;
-}
-
-export interface EmergencyContact {
-  name: string;
-  relationship: string;
-  phone: string;
-  isICE: boolean;
 }
 
 export interface SymptomSuggestion {

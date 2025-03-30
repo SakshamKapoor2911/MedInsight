@@ -1,3 +1,4 @@
+// Ensure this directive is necessary for client-side rendering
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -7,27 +8,15 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bot, Send, User, ArrowRight, Moon, Sun, Stethoscope, Video, Clock, ArrowLeft } from "lucide-react";
 import { SeverityIndicator } from "@/components/severity-indicator";
-import { DoctorList } from "@/components/doctor-list";
-import { EmergencyPanel } from "@/components/emergency-panel";
-import { SymptomSuggestions } from "@/components/symptom-suggestions";
-import { analyzeSymptoms, findAvailableDoctors } from "@/lib/analysis";
-import { getEmergencyInfo } from "@/lib/emergency";
-import { getSuggestedSymptoms } from "@/lib/symptoms";
+// import { DoctorList } from "@/components/doctor-list";
+// import { EmergencyPanel } from "@/components/emergency-panel";
+// import { SymptomSuggestions } from "@/components/symptom-suggestions";
+// import { analyzeSymptoms, findAvailableDoctors } from "@/lib/analysis";
+// import { getEmergencyInfo } from "@/lib/emergency";
+// import { getSuggestedSymptoms } from "@/lib/symptoms";
 import { useTheme } from "next-themes";
-import type { SymptomAnalysis, DoctorMatch, SymptomSuggestion } from "@/lib/types";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
-interface Conversation {
-  id: string;
-  title: string;
-  lastMessage: string;
-  date: Date;
-  messages: Message[];
-}
+import type {Doctor, SymptomAnalysis, Message, Conversation } from "@/lib/types";
+import { findAvailableDoctors, findNearbyHospitals } from "@/lib/analysis";
 
 type Stage = "chat" | "analysis" | "doctors" | "history";
 
@@ -38,10 +27,10 @@ const LamaLogo = () => (
       <div className="relative">
         <Bot className="h-6 w-6 text-primary" />
         <Stethoscope className="h-4 w-4 text-primary absolute -top-1 -right-1 transform rotate-45" />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
 // Sample conversation starters to make the chat more interactive
 const conversationStarters = [
@@ -53,18 +42,18 @@ const conversationStarters = [
 ];
 
 // List of possible doctor specializations with descriptions
-const specializations = {
-  "Cardiologist": "Heart and blood vessel specialist",
-  "Dermatologist": "Skin, hair, and nail specialist",
-  "Neurologist": "Brain and nervous system specialist",
-  "Gastroenterologist": "Digestive system specialist",
-  "Orthopedist": "Bone and joint specialist",
-  "Pulmonologist": "Lung and respiratory specialist",
-  "Endocrinologist": "Hormone and metabolism specialist",
-  "Rheumatologist": "Autoimmune and joint disease specialist",
-  "Psychiatrist": "Mental health specialist",
-  "ENT": "Ear, nose, and throat specialist"
-};
+// const specializations = {
+//   "Cardiologist": "Heart and blood vessel specialist",
+//   "Dermatologist": "Skin, hair, and nail specialist",
+//   "Neurologist": "Brain and nervous system specialist",
+//   "Gastroenterologist": "Digestive system specialist",
+//   "Orthopedist": "Bone and joint specialist",
+//   "Pulmonologist": "Lung and respiratory specialist",
+//   "Endocrinologist": "Hormone and metabolism specialist",
+//   "Rheumatologist": "Autoimmune and joint disease specialist",
+//   "Psychiatrist": "Mental health specialist",
+//   "ENT": "Ear, nose, and throat specialist"
+// };
 
 export default function Home() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -72,17 +61,17 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm your AI health assistant powered by MedLama. How can I help you today? Feel free to describe any symptoms or health concerns you're experiencing.",
+      content: "Hello! I'm your AI health assistant powered by Gemini and Perplexity. How can I help you today? Feel free to describe any symptoms or health concerns you're experiencing.",
     },
   ]);
   const [input, setInput] = useState("");
   const [stage, setStage] = useState<Stage>("chat");
   const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
-  const [doctors, setDoctors] = useState<DoctorMatch[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isReadyForAnalysis, setIsReadyForAnalysis] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDimmed, setIsDimmed] = useState(false);
-  const [suggestions, setSuggestions] = useState<SymptomSuggestion[]>([]);
+  // const [suggestions, setSuggestions] = useState<SymptomSuggestion[]>([]);
   const [showConversationStarters, setShowConversationStarters] = useState(true);
   const { theme, setTheme } = useTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -91,14 +80,14 @@ export default function Home() {
     setIsDimmed(isProcessing);
   }, [isProcessing]);
 
-  useEffect(() => {
-    if (input.length > 2) {
-      const newSuggestions = getSuggestedSymptoms(input);
-      setSuggestions(newSuggestions);
-    } else {
-      setSuggestions([]);
-    }
-  }, [input]);
+  // useEffect(() => {
+  //   if (input.length > 2) {
+  //     const newSuggestions = getSuggestedSymptoms(input);
+  //     setSuggestions(newSuggestions);
+  //   } else {
+  //     setSuggestions([]);
+  //   }
+  // }, [input]);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -132,55 +121,15 @@ export default function Home() {
     }
   }, [conversations]);
 
-  // Generate more conversational responses based on user input
-  const generateResponse = (userMessage: string): string => {
-    // Extract potential symptoms or concerns from the message
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Check for certain keywords to generate relevant responses
-    if (lowerMessage.includes("pain") || lowerMessage.includes("hurt")) {
-      return "I'm sorry to hear you're in pain. Could you tell me more about where it hurts and how severe the pain is? Is it sharp, dull, or throbbing? Does anything make it better or worse?";
+  const generateResponse = async (userMessage: string): Promise<string> => {
+    try {
+      const result = await fetch(`http://127.0.0.1:5000/api/llm/response/?message=${userMessage}`);
+      const jsonResponse = await result.json();
+      return jsonResponse.response;
+    } catch (err) {
+      console.error(err);
+      return "An error occurred while generating the response.";
     }
-    
-    if (lowerMessage.includes("fever") || lowerMessage.includes("temperature")) {
-      return "A fever can be a sign your body is fighting an infection. Have you measured your temperature? Are you experiencing any other symptoms along with the fever, like chills, sweating, or fatigue?";
-    }
-    
-    if (lowerMessage.includes("headache") || lowerMessage.includes("migraine")) {
-      return "Headaches can be quite disruptive. Is this a new type of headache for you or something you've experienced before? Where exactly is the pain located, and does light or sound affect it?";
-    }
-    
-    if (lowerMessage.includes("rash") || lowerMessage.includes("skin")) {
-      return "Skin issues can be concerning. Can you describe what the rash looks like? Is it itchy, painful, or changing in appearance? Have you started using any new products recently that might be causing a reaction?";
-    }
-    
-    if (lowerMessage.includes("tired") || lowerMessage.includes("fatigue") || lowerMessage.includes("exhausted")) {
-      return "Fatigue can impact your quality of life significantly. Has this tiredness come on suddenly or gradually? Are you getting enough sleep, and has your sleep quality changed recently? Any other symptoms accompanying the fatigue?";
-    }
-    
-    if (lowerMessage.includes("stress") || lowerMessage.includes("anxiety") || lowerMessage.includes("depression")) {
-      return "I appreciate you sharing your mental health concerns. How long have you been feeling this way? Are there specific situations that trigger these feelings? Have you noticed any physical symptoms alongside these emotional experiences?";
-    }
-    
-    if (lowerMessage.includes("cough") || lowerMessage.includes("cold") || lowerMessage.includes("flu")) {
-      return "Respiratory symptoms can be uncomfortable. Is your cough dry or productive with phlegm? Have you noticed any fever, shortness of breath, or other symptoms? How long have you been experiencing these symptoms?";
-    }
-    
-    if (lowerMessage.includes("stomach") || lowerMessage.includes("nausea") || lowerMessage.includes("vomit")) {
-      return "Digestive issues can be quite disruptive. When did these symptoms start? Have you noticed any patterns with certain foods? Are you experiencing any other symptoms like fever or pain alongside the digestive issues?";
-    }
-
-    // If no specific concerns detected, ask general follow-up questions
-    const generalResponses = [
-      "Thank you for sharing that. How long have you been experiencing these symptoms?",
-      "I see. Has anything made these symptoms better or worse?",
-      "That's important information. Have you had any similar experiences in the past?",
-      "I understand. Are you currently taking any medications that might be relevant?",
-      "Thanks for explaining. Have these symptoms been affecting your daily activities or sleep?",
-      "I appreciate you sharing this. Have you noticed any patterns in when these symptoms appear?"
-    ];
-    
-    return generalResponses[Math.floor(Math.random() * generalResponses.length)];
   };
 
   const createNewConversation = () => {
@@ -193,11 +142,11 @@ export default function Home() {
       messages: [
         {
           role: "assistant",
-          content: "Hello! I'm your AI health assistant powered by MedLama. How can I help you today? Feel free to describe any symptoms or health concerns you're experiencing.",
+          content: "Hello! I'm your AI health assistant powered by Gemini and Perplexity. How can I help you today? Feel free to describe any symptoms or health concerns you're experiencing.",
         }
       ]
     };
-    
+
     setConversations(prev => [newConversation, ...prev]);
     setCurrentConversationId(newId);
     setMessages(newConversation.messages);
@@ -219,7 +168,7 @@ export default function Home() {
     const userMessage = { role: "user" as const, content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setSuggestions([]);
+    // setSuggestions([]);
     setIsProcessing(true);
     setShowConversationStarters(false);
 
@@ -257,31 +206,32 @@ export default function Home() {
         date: new Date(),
         messages: [messages[0], userMessage]
       };
-      
+
       setConversations(prev => [newConversation, ...prev]);
       setCurrentConversationId(newId);
     }
 
     // After 2 exchanges, show the analysis button
-    setTimeout(() => {
-      setMessages((prev) => [...prev, aiResponse]);
-      setIsProcessing(false);
-      
+    setTimeout(async () => {
+          const resolvedContent = await aiResponse.content;
+          setMessages((prev) => [...prev, { ...aiResponse, content: resolvedContent }]);
+          setIsProcessing(false);
+
       // Update the conversation with the AI response
       if (currentConversationId) {
         setConversations(prev => {
-          return prev.map(conv => {
-            if (conv.id === currentConversationId) {
-              return {
-                ...conv,
-                messages: [...conv.messages, aiResponse],
-              };
-            }
-            return conv;
-          });
-        });
+                  return prev.map(conv => {
+                    if (conv.id === currentConversationId) {
+                      return {
+                        ...conv,
+                        messages: [...conv.messages, { ...aiResponse, content: resolvedContent }],
+                      };
+                    }
+                    return conv;
+                  });
+                });
       }
-      
+
       // After a few exchanges, suggest analysis
       const userMessageCount = messages.filter(m => m.role === "user").length;
       if (userMessageCount >= 1) {
@@ -308,68 +258,24 @@ export default function Home() {
           "Schedule a follow-up with a specialist if symptoms persist"
         ],
         suggestedSpecialists: ["Cardiologist", "Internal Medicine"],
-        possibleConditions: ["Stress-related symptoms", "Mild hypertension", "Anxiety"],
-        emergencyInfo: null
+        nearbyFacilities: await findNearbyHospitals()
       };
 
       // Even for medium/low risk, show hospital options
-      const emergencyInfo = {
-        nearbyHospitals: [
-          { name: "City General Hospital", distance: "2.3 miles", address: "123 Health Ave" },
-          { name: "University Medical Center", distance: "4.1 miles", address: "500 Medical Blvd" },
-          { name: "Community Health Clinic", distance: "1.8 miles", address: "78 Wellness St" }
-        ],
-        emergencyNumber: "911"
-      };
-      
-      result.emergencyInfo = emergencyInfo;
-      
-      // Fetch tailored follow-up questions using Gemini API
-      try {
-        const response = await fetch('/api/gemini/follow-up', {
-          method: 'POST',
-          headers: {
-        'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ symptoms }),
-        });
-
-        if (response.ok) {
-          const followUpQuestions = await response.json();
-          result.followUpQuestions = followUpQuestions;
-        } else {
-          console.error('Failed to fetch follow-up questions from Gemini API');
-        }
-      } catch (error) {
-        console.error('Error fetching follow-up questions:', error);
-      }
-
-      // Check if the user has already been asked follow-up questions
-      const hasFollowUpQuestions = messages.some(
-        (msg) =>
-          msg.role === "assistant" &&
-          result.followUpQuestions &&
-          result.followUpQuestions.includes(msg.content)
-      );
-
-      if (!hasFollowUpQuestions && result.followUpQuestions) {
-        const followUpQuestion = result.followUpQuestions[0];
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: followUpQuestion },
-        ]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-        role: "assistant",
-        content:
-          "Would you like me to analyze your symptoms and provide recommendations?",
-          },
-        ]);
-      }
+      // const emergencyInfo = {
+      //   nearbyHospitals: [
+      //     { name: "City General Hospital", distance: "2.3 miles", address: "123 Health Ave", contact: "N/A" },
+      //     { name: "University Medical Center", distance: "4.1 miles", address: "500 Medical Blvd", contact: "N/A" },
+      //     { name: "Community Health Clinic", distance: "1.8 miles", address: "78 Wellness St", contact: "N/A" }
+      //   ],
+      //   emergencyNumber: "911"
+      // };
 
       setAnalysis(result);
+      const doctorsBySpecialty = await Promise.all(
+        result.suggestedSpecialists.map((specialty) => findAvailableDoctors(specialty))
+      );
+      setDoctors(doctorsBySpecialty.flat());
 
       // Add a slight delay to simulate processing and make it feel interactive
       setTimeout(() => {
@@ -382,38 +288,6 @@ export default function Home() {
         document.body.classList.remove("transitioning");
       }, 1000);
 
-      // Create more detailed doctor information with specializations
-      const doctorsWithSpecializations = [
-        {
-          name: "Dr. Sarah Johnson",
-          specialty: "Cardiologist",
-          description: specializations["Cardiologist"],
-          image: "/images/doctor1.jpg",
-          nextAvailable: "Tomorrow, 2:30 PM",
-          rating: 4.9,
-          distance: "3.2 miles"
-        },
-        {
-          name: "Dr. Michael Chen",
-          specialty: "Cardiologist",
-          description: specializations["Cardiologist"],
-          image: "/images/doctor2.jpg",
-          nextAvailable: "Thursday, 10:15 AM",
-          rating: 4.7,
-          distance: "1.8 miles"
-        },
-        {
-          name: "Dr. Emily Rodriguez",
-          specialty: "Internal Medicine",
-          description: "General health and preventive care specialist",
-          image: "/images/doctor3.jpg",
-          nextAvailable: "Today, 4:45 PM",
-          rating: 4.8,
-          distance: "2.5 miles"
-        }
-      ];
-      
-      setDoctors(doctorsWithSpecializations);
       setStage("analysis");
     } catch (error) {
       console.error("Error analyzing symptoms or finding doctors:", error);
@@ -424,10 +298,6 @@ export default function Home() {
 
   const handleSuggestionSelect = (symptom: string) => {
     setInput((prev) => prev + (prev ? `, ${symptom}` : symptom));
-  };
-
-  const handleEmergencyCall = () => {
-    alert("This is a local environment. Emergency call simulation triggered.");
   };
 
   const loadConversation = (conversationId: string) => {
@@ -495,7 +365,7 @@ export default function Home() {
                 New Consultation
               </Button>
             </div>
-            
+
             {conversations.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <p>No previous consultations found.</p>
@@ -506,7 +376,7 @@ export default function Home() {
             ) : (
               <div className="space-y-2">
                 {conversations.map(conv => (
-                  <div 
+                  <div
                     key={conv.id}
                     className="p-4 border rounded-lg hover:bg-secondary/20 cursor-pointer transition-colors"
                     onClick={() => loadConversation(conv.id)}
@@ -526,9 +396,9 @@ export default function Home() {
                 ))}
               </div>
             )}
-          </Card>
-        </main>
-      </div>
+            </Card>
+          </main>
+        </div>
     );
   }
 
@@ -540,9 +410,9 @@ export default function Home() {
         <main className="flex flex-1 flex-col items-center p-4 md:p-8">
           <Card className="w-full max-w-4xl p-6 shadow-lg glass-card">
             <div className="flex items-center mb-6">
-              <Button 
-                variant="ghost" 
-                className="mr-2 rounded-full" 
+              <Button
+                variant="ghost"
+                className="mr-2 rounded-full"
                 onClick={() => setStage("chat")}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -552,14 +422,14 @@ export default function Home() {
                 Symptom Analysis
               </h2>
             </div>
-            
+
             <SeverityIndicator severity={analysis.severity} />
-            
-            {analysis.emergencyInfo && (
+
+            {/* {analysis.emergencyInfo && (
               <div className="mt-6">
                 <h3 className="text-xl font-semibold mb-3">Nearby Medical Facilities</h3>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {analysis.emergencyInfo.nearbyHospitals.map((hospital, idx) => (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"> */}
+                  {/* {analysis.emergencyInfo.nearbyHospitals.map((hospital, idx) => (
                     <div key={idx} className="border rounded-lg p-4 bg-card/50 hover:shadow-md transition-shadow">
                       <h4 className="font-medium">{hospital.name}</h4>
                       <p className="text-sm text-muted-foreground">{hospital.address}</p>
@@ -572,19 +442,19 @@ export default function Home() {
                         </Button>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  ))} */}
+                {/* </div>
               </div>
-            )}
+            )} */}
 
             <div className="mt-8">
               <h3 className="text-xl font-semibold mb-4">Possible Conditions</h3>
               <div className="flex flex-wrap gap-2">
-                {analysis.possibleConditions.map((condition, i) => (
+                {/* {analysis.possibleConditions?.map((condition: string, i: number) => (
                   <span key={i} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                    {condition}
+                  {condition}
                   </span>
-                ))}
+                ))} */}
               </div>
             </div>
 
@@ -614,27 +484,30 @@ export default function Home() {
                         <p className="text-xs text-primary">{doctor.specialty}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3">{doctor.description}</p>
-                    <div className="flex justify-between items-center text-xs text-muted-foreground mb-3">
-                      <span>Next available: {doctor.nextAvailable}</span>
-                      <span>{doctor.distance}</span>
+                    <div>
+                        {/* <p>{doctor.description || "No description available"}</p> */}
+                      <div className="flex justify-between items-center text-xs text-muted-foreground mb-3">
+                        {/* <span>Next available: {doctor.nextAvailable}</span> */}
+                        {/* <span>{doctor.distance}</span> */}
+                      </div>
+                      <Button size="sm" className="w-full">
+                        Schedule Appointment
+                      </Button>
                     </div>
-                    <Button size="sm" className="w-full">
-                      Schedule Appointment
-                    </Button>
                   </div>
-                ))}
+                ))
+              }
               </div>
             </div>
 
             <div className="flex justify-between mt-8">
-              <Button 
+              <Button
                 onClick={() => setStage("chat")}
                 variant="outline"
               >
                 Continue Chat
               </Button>
-              <Button 
+              <Button
                 onClick={createNewConversation}
                 variant="default"
               >
@@ -662,8 +535,8 @@ export default function Home() {
                   }`}
                 >
                   <div className={`rounded-full p-2 ${
-                    message.role === "assistant" 
-                      ? "bg-primary/10" 
+                    message.role === "assistant"
+                      ? "bg-primary/10"
                       : "bg-secondary"
                   }`}>
                     {message.role === "assistant" ? (
@@ -699,10 +572,10 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground mb-2">Quick start with common concerns:</p>
                 <div className="flex flex-wrap gap-2">
                   {conversationStarters.map((starter, idx) => (
-                    <Button 
-                      key={idx} 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      key={idx}
+                      variant="outline"
+                      size="sm"
                       className="text-xs rounded-full"
                       onClick={() => handleStarterSelect(starter)}
                     >
@@ -712,14 +585,14 @@ export default function Home() {
                 </div>
               </div>
             )}
-            
-            {suggestions.length > 0 && (
-              <SymptomSuggestions 
-                suggestions={suggestions} 
-                onSelect={handleSuggestionSelect} 
+
+            {/* {suggestions.length > 0 && (
+              <SymptomSuggestions
+                suggestions={suggestions}
+                onSelect={handleSuggestionSelect}
               />
-            )}
-            
+            )} */}
+
             <form
               onSubmit={handleSubmit}
               className="flex items-center gap-2"
@@ -730,9 +603,9 @@ export default function Home() {
                 onChange={(e) => setInput(e.target.value)}
                 className="flex-1 rounded-full bg-secondary/50"
               />
-              <Button 
-                type="submit" 
-                size="icon" 
+              <Button
+                type="submit"
+                size="icon"
                 className="rounded-full hover:glow-effect"
                 disabled={isProcessing}
               >
