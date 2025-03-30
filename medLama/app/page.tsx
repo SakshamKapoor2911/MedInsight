@@ -35,6 +35,17 @@ const LamaLogo = () => (
   </div>
 );
 
+const getDynamicResponse = (symptoms: string, messageCount: number) => {
+  if (symptoms.includes("chest pain") || symptoms.includes("shortness of breath")) {
+    return "This could be serious. Have you experienced this before, and how long has it lasted?";
+  } else if (messageCount === 3) {
+    return "Do you have any known medical conditions or allergies?";
+  } else if (messageCount === 5) {
+    return "I think I have enough information. Click 'Done' to analyze your symptoms.";
+  }
+  return "Is there anything else you'd like to add?";
+};
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -57,7 +68,7 @@ export default function Home() {
   }, [isProcessing]);
 
   useEffect(() => {
-    if (input.length > 2) {
+    if (input.length > 1) {
       const newSuggestions = getSuggestedSymptoms(input);
       setSuggestions(newSuggestions);
     } else {
@@ -78,28 +89,10 @@ export default function Home() {
     const messageCount = messages.length;
     let aiResponse: Message;
 
-    if (messageCount === 1) {
-      aiResponse = {
-        role: "assistant",
-        content: "When did these symptoms start? And have they gotten worse over time?",
-      };
-    } else if (messageCount === 3) {
-      aiResponse = {
-        role: "assistant",
-        content: "Do you have any medical history or conditions that might be relevant? Even if you don't think it's directly related, it's important to know.",
-      };
-    } else if (messageCount === 5) {
-      aiResponse = {
-        role: "assistant",
-        content: "I think I have enough information to analyze your symptoms. Click 'Done' when you're ready for the analysis, or feel free to add any other details you think might be important.",
-      };
-      setIsReadyForAnalysis(true);
-    } else {
-      aiResponse = {
-        role: "assistant",
-        content: "Thank you for providing that information. Is there anything else you'd like to add?",
-      };
-    }
+    aiResponse = {
+      role: "assistant",
+      content: getDynamicResponse(input, messageCount),
+    };
 
     setTimeout(() => {
       setMessages((prev) => [...prev, aiResponse]);
@@ -114,7 +107,14 @@ export default function Home() {
       .map((msg) => msg.content)
       .join(" ");
 
-    const result = await analyzeSymptoms(symptoms);
+
+    const criticalSymptoms = ["chest pain", "shortness of breath", "loss of consciousness", "severe headache", "numbness on one side"];
+    
+    let result = await analyzeSymptoms(symptoms);
+    
+    if (criticalSymptoms.some(symptom => symptoms.toLowerCase().includes(symptom))) {
+      result.severity = "high";
+    }
 
     if (result.severity === "high") {
       const emergencyInfo = await getEmergencyInfo("current-location");
@@ -135,6 +135,17 @@ export default function Home() {
   const handleEmergencyCall = () => {
     // In a real app, this would integrate with the device's phone system
     window.location.href = "tel:911";
+  };
+
+  const handleNewConsultation = () => {
+    const previousChats = JSON.parse(localStorage.getItem("medlama_chats") || "[]");
+    const newChat = { timestamp: Date.now(), messages };
+    localStorage.setItem("medlama_chats", JSON.stringify([...previousChats, newChat]));
+    localStorage.removeItem("medlama_chat");
+    setMessages([]);
+    setAnalysis(null);
+    setDoctors([]);
+    setStage("chat");
   };
 
   const Header = () => (
@@ -200,11 +211,15 @@ export default function Home() {
             <div className="mt-8">
               <h3 className="text-xl font-semibold mb-4">Available Specialists</h3>
               <DoctorList doctors={doctors} onSchedule={() => {}} />
+              
+              <Button className="mt-4 w-full" onClick={() => alert("Teleconsultation scheduled!")}>
+                Book Teleconsultation
+              </Button>
             </div>
 
             <Button
               className="mt-8"
-              onClick={() => setStage("chat")}
+              onClick={handleNewConsultation}
               variant="outline"
             >
               Start New Consultation
@@ -252,9 +267,9 @@ export default function Home() {
                 </div>
               ))}
               {isProcessing && (
-                <div className="flex items-center gap-2 text-muted-foreground processing">
+                <div className="flex items-center gap-2 text-muted-foreground animate-pulse">
                   <Bot className="h-5 w-5" />
-                  <span>Analyzing...</span>
+                  <span>Typing...</span>
                 </div>
               )}
             </div>
