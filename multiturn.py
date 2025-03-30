@@ -10,6 +10,27 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, START, END
 import markdown 
+import re
+import textwrap
+
+
+def beautify_text(text, width=80):
+    # Remove ** from the text
+    text = re.sub(r'\*\*', '', text)
+
+    # Ensure numbered sections (1., 2., etc.) start on a new line
+    text = re.sub(r'(\d+\.)', r'\n\1', text)
+
+    # Ensure bullet points (*) start on a new line and replace them with "-"
+    text = re.sub(r'\n?\s*\*', '\n- ', text)
+
+    # Wrap text for better readability
+    wrapped_lines = []
+    for line in text.split("\n"):
+        wrapped_lines.append(textwrap.fill(line, width) if line.strip() else line)
+
+    return "\n".join(wrapped_lines)
+    
 # Environment Initialization
 def init_environment():
     """Initialize environment variables and validate API keys"""
@@ -517,6 +538,7 @@ def run_web_prompt(input: str):
 
     messages = state["messages"]
     response = markdown.markdown(messages[-1]["content"] + additional_message)
+    response = beautify_text(response)
     return {
         "messages": response,
         "analysis_complete": state.get("analysis_complete", False),
