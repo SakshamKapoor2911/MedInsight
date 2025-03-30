@@ -3,7 +3,7 @@ from flask_cors import CORS
 import os
 from database import Database
 
-from multiturn import run_interactive_demo
+from multiturn import run_web_prompt
 
 class HooHacksApp:
     def __init__(self):
@@ -39,14 +39,14 @@ class HooHacksApp:
 
             return jsonify(self.database.get_health_centers(latitude, longitude))
 
-        @self.app.route('/api/llm/response', methods=['POST'])
-        def get_starting_prompt():
-            message = request.args.get(message, type=str, default="")
-            return jsonify(run_interactive_demo())
+        @self.app.route('/api/llm/response/')
+        def prompt():
+            message = request.args.get("message", type=str, default="")
+            return jsonify({"response": run_web_prompt(message)})
 
-        @self.app.route('/api/llm/delete', methods=['POST'])
+        @self.app.route('/api/llm/delete/')
         def delete_conversation():
-            return jsonify()
+            return jsonify(run_web_prompt("exit"))
 
         @self.app.route('/<path:path>')
         def serve_static_files(path):
