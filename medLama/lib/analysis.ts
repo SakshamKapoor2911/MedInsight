@@ -165,14 +165,11 @@ export async function analyzeSymptoms(symptoms: string): Promise<SymptomAnalysis
 }
 
 export async function findAvailableDoctors(specialty: string, latitude: number = 38.02931000, longitude: number = -78.47668000): Promise<DoctorMatch[]> {
-  console.log(specialty);
-
   try {
     const res = await fetch(`http://127.0.0.1:5000/api/doctors?latitude=${latitude}&longitude=${longitude}&specialty=${specialty}`);
     return await res.json();
   } catch (err) {
     console.log(err);
   }
-
   return [];
 }
