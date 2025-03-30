@@ -9,7 +9,6 @@ from langgraph.errors import GraphRecursionError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, START, END
-
 # Environment Initialization
 def init_environment():
     """Initialize environment variables and validate API keys"""
@@ -111,7 +110,7 @@ class State(TypedDict):
     conversation_stage: Annotated[str, "Current stage of the conversation"]
     symptom_details: Annotated[Dict[str, Any], "Collected symptom information"]
     question_count: Annotated[int, "Number of questions asked so far"]
-    emergency_detected: Annotated[bool, "Whether emergency symptoms were detected"]
+    risk_assessment: Annotated[str, "Risk assessment as LOW, MEDIUM, or HIGH"]
 
 # Helper Functions
 def format_conversation_history(messages):
@@ -151,83 +150,12 @@ def extract_symptom_details(messages):
         print(f"Error extracting symptom details: {str(e)}")
         return {"extracted_data": "Error processing symptoms", "last_updated": len(messages)}
 
-def check_for_emergency(messages, symptom_details=None):
-    """Check if the user's symptoms suggest a medical emergency"""
-    # Only check for emergencies if we have gathered enough context
-    if len(messages) < 2:  # We need at least initial symptoms
-        return False
-
-    # Combine all user messages to get full context
-    user_input = " ".join([msg["content"] for msg in messages if msg["role"] == "user"])
-
-    # Define clear emergency indicators with severity thresholds
-    emergency_prompt = f"""
-    {SYSTEM_PROMPT}
-
-    Evaluate these patient symptoms for potential medical emergencies:
-
-    Patient symptoms: {user_input}
-
-    Rate the emergency level on a scale of 0-5, where:
-    0 = No concern, routine symptoms
-    1 = Minor concern, monitor
-    2 = Moderate concern, consider same-day appointment
-    3 = Significant concern, urgent care recommended
-    4 = Serious concern, emergency room suggested
-    5 = Critical emergency, call 911 immediately
-
-    Return ONLY the numeric rating.
-    """
-
-    try:
-        response = llm.invoke(emergency_prompt)
-        # Extract the numeric rating, handling potential formatting issues
-        content = response.content.strip()
-        # Look for digits in the response
-        import re
-        rating_match = re.search(r'\d+', content)
-        if rating_match:
-            rating = int(rating_match.group())
-            return rating >= 4  # Only true emergencies trigger the warning
-        return False  # Default to non-emergency if no number found
-    except Exception as e:
-        print(f"Error checking for emergency: {str(e)}")
-        # Default to non-emergency if unable to parse the response
-        return False
-
-# Conversation Flow Nodes
 @api_rate_limit(2)
 def interactive_conversation(state: State):
     """Handle multi-turn conversation to gather detailed symptom information"""
     current_messages = state["messages"]
     question_count = state.get("question_count", 0)
     symptom_details = state.get("symptom_details", {})
-
-    # Check for emergency conditions first
-    if question_count == 0 or (len(current_messages) > 0 and current_messages[-1]["role"] == "user"):
-        is_emergency = check_for_emergency(current_messages)
-        if is_emergency:
-            emergency_response = f"""
-            MEDICAL EMERGENCY DETECTED: Based on the symptoms you've described, you may be experiencing a medical emergency.
-
-            PLEASE SEEK IMMEDIATE MEDICAL ATTENTION:
-            - Call emergency services (911 in the US)
-            - Go to the nearest emergency room
-            - Do not wait or delay seeking care
-
-            While waiting for emergency services:
-            - Stay calm and rest in a position that makes breathing easiest
-            - Don't eat or drink anything
-            - If advised by a healthcare provider, take aspirin for suspected heart attack
-            - Have someone stay with you if possible
-            """
-
-            new_message = {"role": "assistant", "content": emergency_response}
-            return {
-                "messages": current_messages + [new_message],
-                "emergency_detected": True,
-                "conversation_stage": "emergency"
-            }
 
     # Update symptom details after receiving user input
     if len(current_messages) > 0 and current_messages[-1]["role"] == "user":
@@ -351,8 +279,10 @@ def generate_analysis(state: State):
     RESEARCH FINDINGS:
     {research_data}
 
+    RISK ASSESSMENT (TO GENERATE OUTPUT):
+    {"LOW", "MEDIUM", "HIGH"} risk of serious conditions based on the symptoms and research findings. It must match this exact format.
     Your analysis should include:
-    1. A summary of the key symptoms and risk factors
+    1. A summary of the key symptoms and risk factors. 
     2. A differential diagnosis with conditions ranked by likelihood (include confidence levels as percentages)
     3. Explanation of each potential condition
     4. Recommended next steps (diagnostics, specialists to consult, lifestyle recommendations)
@@ -374,19 +304,17 @@ def final_response(state: State):
     return {
         "messages": state["messages"] + [final_message],
         "conversation_stage": "complete",
-        "analysis_complete": True  # Add this flag
+        "analysis_complete": True,
+        "risk": state.get("risk_assessment", "UNKNOWN"),
+        "report": state["report"],
     }
 
 
 # Flow Control Functions
 def determine_next_stage(state: State) -> str:
     """Determine the next stage based on the conversation state"""
-
     if state.get("analysis_complete", False):
         return "final_response"
-    # Check if emergency was detected
-    if state.get("emergency_detected", False):
-        return "end"
 
     # Get conversation stage
     current_stage = state.get("conversation_stage", "conversation")
@@ -440,8 +368,7 @@ def reset_conversation(state: State):
         "report": {},
         "conversation_stage": "conversation",
         "symptom_details": {},
-        "question_count": 0,
-        "emergency_detected": False
+        "question_count": 0
     }
 
 # Build the graph
@@ -492,8 +419,7 @@ def start_medical_chat(initial_message):
         "report": {},
         "conversation_stage": "conversation",
         "symptom_details": {},
-        "question_count": 0,
-        "emergency_detected": False
+        "question_count": 0
     }
     try:
         result_state = graph.invoke(initial_state, {"recursion_limit": 8})
@@ -594,6 +520,7 @@ def run_web_prompt(input: str):
         "messages": response,
         "analysis_complete": state.get("analysis_complete", False),
     }
+#messages[-1]['content'] + additional_message
 
 if __name__ == "__main__":
     # To run the interactive demo
