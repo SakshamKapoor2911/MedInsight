@@ -46,7 +46,7 @@ class HooHacksApp:
 
         @self.app.route('/api/llm/delete/')
         def delete_conversation():
-            return jsonify(run_web_prompt("exit"))
+            return jsonify({"response": run_web_prompt("exit")})
 
         @self.app.route('/<path:path>')
         def serve_static_files(path):
