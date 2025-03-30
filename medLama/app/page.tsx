@@ -415,7 +415,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div>
-                      <p className="text-s text-secondary">Phone: {facility.phone}</p>
+                      <p className="text-s text-primary mb-1">Phone: {facility.phone}</p>
                     </div>
                   </div>
                 ))}
@@ -437,8 +437,8 @@ export default function Home() {
                       </div>
                     </div>
                     <div>
-                      <p className="text-s text-secondary">Phone: {doctor.phone}</p>
-                      <p className="text-s text-secondary">Email: {doctor.email}</p>
+                      <p className="text-s text-primary">Phone: {doctor.phone}</p>
+                      <p className="text-s text-primary">Email: {doctor.email}</p>
                     </div>
                     <Button size="sm" className="w-full">
                       Schedule Appointment

@@ -9,7 +9,7 @@ from langgraph.errors import GraphRecursionError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, START, END
-import markdown 
+import markdown
 import re
 import textwrap
 
@@ -30,7 +30,7 @@ def beautify_text(text, width=80):
         wrapped_lines.append(textwrap.fill(line, width) if line.strip() else line)
 
     return "\n".join(wrapped_lines)
-    
+
 # Environment Initialization
 def init_environment():
     """Initialize environment variables and validate API keys"""
@@ -304,7 +304,7 @@ def generate_analysis(state: State):
     RISK ASSESSMENT (TO GENERATE OUTPUT):
     {"LOW", "MEDIUM", "HIGH"} risk of serious conditions based on the symptoms and research findings. It must match this exact format.
     Your analysis should include:
-    1. A summary of the key symptoms and risk factors. 
+    1. A summary of the key symptoms and risk factors.
     2. A differential diagnosis with conditions ranked by likelihood (include confidence levels as percentages)
     3. Explanation of each potential condition
     4. Recommended next steps (diagnostics, specialists to consult, lifestyle recommendations)
@@ -542,13 +542,13 @@ def run_web_prompt(input: str):
         # Add reset notification to the message
         additional_message += "\nAnalysis complete. Starting fresh conversation. Type your new symptoms or concerns.\n"
         return {
-            "messages": markdown.markdown(final_response + additional_message),
+            "messages": final_response + additional_message,
             "analysis_complete": True
         }
 
     messages = state["messages"]
-    response = markdown.markdown(messages[-1]["content"] + additional_message)
-    
+    response = messages[-1]["content"] + additional_message
+
     return {
         "messages": response,
         "analysis_complete": state.get("analysis_complete", False),
