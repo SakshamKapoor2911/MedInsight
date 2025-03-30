@@ -589,7 +589,11 @@ def run_web_prompt(input: str):
         additional_message += "Or you can continue discussing the current condition with follow-up questions.\n"
 
     messages = state["messages"]
-    return messages[-1]['content'] + additional_message
+    response = messages[-1]["content"] + additional_message
+    return {
+        "messages": response,
+        "analysis_complete": state.get("analysis_complete", False),
+    }
 
 if __name__ == "__main__":
     # To run the interactive demo
