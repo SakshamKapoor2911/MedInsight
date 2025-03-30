@@ -13,9 +13,7 @@ export interface Conversation {
 
 export interface SymptomAnalysis {
   severity: "low" | "moderate" | "high";
-  recommendations: string[];
-  suggestedSpecialists: string[];
-  nearbyFacilities: EmergencyFacility[];
+  report: string;
 }
 
 export interface Doctor {

@@ -8,14 +8,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bot, Send, User, ArrowRight, Moon, Sun, Stethoscope, Video, Clock, ArrowLeft } from "lucide-react";
 import { SeverityIndicator } from "@/components/severity-indicator";
-// import { DoctorList } from "@/components/doctor-list";
-// import { EmergencyPanel } from "@/components/emergency-panel";
-// import { SymptomSuggestions } from "@/components/symptom-suggestions";
-// import { analyzeSymptoms, findAvailableDoctors } from "@/lib/analysis";
-// import { getEmergencyInfo } from "@/lib/emergency";
-// import { getSuggestedSymptoms } from "@/lib/symptoms";
 import { useTheme } from "next-themes";
-import type {Doctor, SymptomAnalysis, Message, Conversation } from "@/lib/types";
+import type { Doctor, SymptomAnalysis, Message, Conversation, EmergencyFacility } from "@/lib/types";
 import { findAvailableDoctors, findNearbyHospitals } from "@/lib/analysis";
 
 type Stage = "chat" | "analysis" | "doctors" | "history";
@@ -27,10 +21,10 @@ const LamaLogo = () => (
       <div className="relative">
         <Bot className="h-6 w-6 text-primary" />
         <Stethoscope className="h-4 w-4 text-primary absolute -top-1 -right-1 transform rotate-45" />
-        </div>
       </div>
     </div>
-  );
+  </div>
+);
 
 // Sample conversation starters to make the chat more interactive
 const conversationStarters = [
@@ -40,20 +34,6 @@ const conversationStarters = [
   "My skin has developed a rash that won't go away.",
   "I'm feeling unusually tired all the time."
 ];
-
-// List of possible doctor specializations with descriptions
-// const specializations = {
-//   "Cardiologist": "Heart and blood vessel specialist",
-//   "Dermatologist": "Skin, hair, and nail specialist",
-//   "Neurologist": "Brain and nervous system specialist",
-//   "Gastroenterologist": "Digestive system specialist",
-//   "Orthopedist": "Bone and joint specialist",
-//   "Pulmonologist": "Lung and respiratory specialist",
-//   "Endocrinologist": "Hormone and metabolism specialist",
-//   "Rheumatologist": "Autoimmune and joint disease specialist",
-//   "Psychiatrist": "Mental health specialist",
-//   "ENT": "Ear, nose, and throat specialist"
-// };
 
 export default function Home() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -68,10 +48,10 @@ export default function Home() {
   const [stage, setStage] = useState<Stage>("chat");
   const [analysis, setAnalysis] = useState<SymptomAnalysis | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [facilities, setFacilities] = useState<EmergencyFacility[]>([]);
   const [isReadyForAnalysis, setIsReadyForAnalysis] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDimmed, setIsDimmed] = useState(false);
-  // const [suggestions, setSuggestions] = useState<SymptomSuggestion[]>([]);
   const [showConversationStarters, setShowConversationStarters] = useState(true);
   const { theme, setTheme } = useTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,15 +59,6 @@ export default function Home() {
   useEffect(() => {
     setIsDimmed(isProcessing);
   }, [isProcessing]);
-
-  // useEffect(() => {
-  //   if (input.length > 2) {
-  //     const newSuggestions = getSuggestedSymptoms(input);
-  //     setSuggestions(newSuggestions);
-  //   } else {
-  //     setSuggestions([]);
-  //   }
-  // }, [input]);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -123,9 +94,28 @@ export default function Home() {
 
   const generateResponse = async (userMessage: string): Promise<string> => {
     try {
-      const result = await fetch(`http://127.0.0.1:5000/api/llm/response/?message=${userMessage}`);
+      const result = await fetch(`/api/llm/response/?message=${userMessage}`);
       const jsonResponse = await result.json();
-      return jsonResponse.response;
+
+      if (jsonResponse.analysis_complete) {
+        const severityMatch = jsonResponse.messages.match(/(low|moderate|high)/i);
+        const severity = severityMatch
+          ? severityMatch[0].toLowerCase()
+          : "moderate";
+
+        const result = {
+          severity: severity as SymptomAnalysis["severity"],
+          report: jsonResponse.messages // Convert the array to a single string
+        };
+
+        setAnalysis(result);
+        setDoctors(await findAvailableDoctors(""));
+        setFacilities(await findNearbyHospitals());
+
+        setStage("analysis");
+      }
+
+      return jsonResponse.messages;
     } catch (err) {
       console.error(err);
       return "An error occurred while generating the response.";
@@ -168,7 +158,6 @@ export default function Home() {
     const userMessage = { role: "user" as const, content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    // setSuggestions([]);
     setIsProcessing(true);
     setShowConversationStarters(false);
 
@@ -213,23 +202,23 @@ export default function Home() {
 
     // After 2 exchanges, show the analysis button
     setTimeout(async () => {
-          const resolvedContent = await aiResponse.content;
-          setMessages((prev) => [...prev, { ...aiResponse, content: resolvedContent }]);
-          setIsProcessing(false);
+      const resolvedContent = await aiResponse.content;
+      setMessages((prev) => [...prev, { ...aiResponse, content: resolvedContent }]);
+      setIsProcessing(false);
 
       // Update the conversation with the AI response
       if (currentConversationId) {
         setConversations(prev => {
-                  return prev.map(conv => {
-                    if (conv.id === currentConversationId) {
-                      return {
-                        ...conv,
-                        messages: [...conv.messages, { ...aiResponse, content: resolvedContent }],
-                      };
-                    }
-                    return conv;
-                  });
-                });
+          return prev.map(conv => {
+            if (conv.id === currentConversationId) {
+              return {
+                ...conv,
+                messages: [...conv.messages, { ...aiResponse, content: resolvedContent }],
+              };
+            }
+            return conv;
+          });
+        });
       }
 
       // After a few exchanges, suggest analysis
@@ -249,34 +238,19 @@ export default function Home() {
 
     try {
       // Simulated analysis result - in a real app, this would come from a backend
+      const severityMatch = messages[messages.length - 1].content.match(/(low|moderate|high)/i);
+        const severity = severityMatch
+          ? severityMatch[0].toLowerCase()
+          : "moderate";
+
       const result = {
-        severity: "moderate" as "moderate", // Explicitly cast to the expected literal type
-        recommendations: [
-          "Stay hydrated and get plenty of rest",
-          "Monitor your symptoms for the next 48 hours",
-          "Consider over-the-counter pain relievers if needed",
-          "Schedule a follow-up with a specialist if symptoms persist"
-        ],
-        suggestedSpecialists: ["Cardiologist", "Internal Medicine"],
-        nearbyFacilities: await findNearbyHospitals()
+        severity: severity as SymptomAnalysis["severity"],
+        report: messages[messages.length - 1].content
       };
 
-      // Even for medium/low risk, show hospital options
-      // const emergencyInfo = {
-      //   nearbyHospitals: [
-      //     { name: "City General Hospital", distance: "2.3 miles", address: "123 Health Ave", contact: "N/A" },
-      //     { name: "University Medical Center", distance: "4.1 miles", address: "500 Medical Blvd", contact: "N/A" },
-      //     { name: "Community Health Clinic", distance: "1.8 miles", address: "78 Wellness St", contact: "N/A" }
-      //   ],
-      //   emergencyNumber: "911"
-      // };
-
       setAnalysis(result);
-      const doctorsBySpecialty = await Promise.all(
-        result.suggestedSpecialists.map((specialty) => findAvailableDoctors(specialty))
-      );
-      setDoctors(doctorsBySpecialty.flat());
-
+      setDoctors(await findAvailableDoctors(""));
+      setFacilities(await findNearbyHospitals());
       // Add a slight delay to simulate processing and make it feel interactive
       setTimeout(() => {
         setStage("analysis");
@@ -294,10 +268,6 @@ export default function Home() {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const handleSuggestionSelect = (symptom: string) => {
-    setInput((prev) => prev + (prev ? `, ${symptom}` : symptom));
   };
 
   const loadConversation = (conversationId: string) => {
@@ -396,9 +366,9 @@ export default function Home() {
                 ))}
               </div>
             )}
-            </Card>
-          </main>
-        </div>
+          </Card>
+        </main>
+      </div>
     );
   }
 
@@ -425,49 +395,31 @@ export default function Home() {
 
             <SeverityIndicator severity={analysis.severity} />
 
-            {/* {analysis.emergencyInfo && (
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold mb-3">Nearby Medical Facilities</h3>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"> */}
-                  {/* {analysis.emergencyInfo.nearbyHospitals.map((hospital, idx) => (
-                    <div key={idx} className="border rounded-lg p-4 bg-card/50 hover:shadow-md transition-shadow">
-                      <h4 className="font-medium">{hospital.name}</h4>
-                      <p className="text-sm text-muted-foreground">{hospital.address}</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-xs bg-secondary/50 px-2 py-1 rounded-full">
-                          {hospital.distance}
-                        </span>
-                        <Button variant="outline" size="sm" className="text-xs">
-                          Get Directions
-                        </Button>
-                      </div>
-                    </div>
-                  ))} */}
-                {/* </div>
-              </div>
-            )} */}
-
             <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-4">Possible Conditions</h3>
-              <div className="flex flex-wrap gap-2">
-                {/* {analysis.possibleConditions?.map((condition: string, i: number) => (
-                  <span key={i} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                  {condition}
-                  </span>
-                ))} */}
-              </div>
+              <h3 className="text-xl font-semibold mb-4">AI Analysis Summary</h3>
+              <p className="text-muted-foreground">{analysis.report}</p>
             </div>
 
             <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-4">Recommendations</h3>
-              <ul className="space-y-3">
-                {analysis.recommendations.map((rec, i) => (
-                  <li key={i} className="flex items-center text-muted-foreground">
-                    <span className="mr-3 text-primary">•</span>
-                    {rec}
-                  </li>
+              <h3 className="text-xl font-semibold mb-4">Recommended Facilities</h3>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {facilities.map((facility, idx) => (
+                  <div key={idx} className="border rounded-lg p-4 bg-card/50 hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium">{facility.name}</h4>
+                        <p className="text-xs text-primary">{facility.address}</p>
+                      </div>
+                    </div>
+                    <Button size="sm" className="w-full">
+                      Schedule Appointment
+                    </Button>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
 
             <div className="mt-8">
@@ -484,19 +436,11 @@ export default function Home() {
                         <p className="text-xs text-primary">{doctor.specialty}</p>
                       </div>
                     </div>
-                    <div>
-                        {/* <p>{doctor.description || "No description available"}</p> */}
-                      <div className="flex justify-between items-center text-xs text-muted-foreground mb-3">
-                        {/* <span>Next available: {doctor.nextAvailable}</span> */}
-                        {/* <span>{doctor.distance}</span> */}
-                      </div>
-                      <Button size="sm" className="w-full">
-                        Schedule Appointment
-                      </Button>
-                    </div>
+                    <Button size="sm" className="w-full">
+                      Schedule Appointment
+                    </Button>
                   </div>
-                ))
-              }
+                ))}
               </div>
             </div>
 
@@ -517,7 +461,7 @@ export default function Home() {
           </Card>
         </main>
       </div>
-    )
+    );
   }
 
   return (
@@ -585,13 +529,6 @@ export default function Home() {
                 </div>
               </div>
             )}
-
-            {/* {suggestions.length > 0 && (
-              <SymptomSuggestions
-                suggestions={suggestions}
-                onSelect={handleSuggestionSelect}
-              />
-            )} */}
 
             <form
               onSubmit={handleSubmit}

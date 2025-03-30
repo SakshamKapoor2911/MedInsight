@@ -42,11 +42,11 @@ class HooHacksApp:
         @self.app.route('/api/llm/response/')
         def prompt():
             message = request.args.get("message", type=str, default="")
-            return jsonify({"response": run_web_prompt(message)})
+            return jsonify(run_web_prompt(message))
 
         @self.app.route('/api/llm/delete/')
         def delete_conversation():
-            return jsonify({"response": run_web_prompt("exit")})
+            return jsonify(run_web_prompt("exit"))
 
         @self.app.route('/<path:path>')
         def serve_static_files(path):
