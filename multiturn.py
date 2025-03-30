@@ -9,6 +9,7 @@ from langgraph.errors import GraphRecursionError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, START, END
+import markdown 
 # Environment Initialization
 def init_environment():
     """Initialize environment variables and validate API keys"""
@@ -515,7 +516,7 @@ def run_web_prompt(input: str):
         additional_message += "Or you can continue discussing the current condition with follow-up questions.\n"
 
     messages = state["messages"]
-    response = messages[-1]["content"] + additional_message
+    response = markdown.markdown(messages[-1]["content"] + additional_message)
     return {
         "messages": response,
         "analysis_complete": state.get("analysis_complete", False),
