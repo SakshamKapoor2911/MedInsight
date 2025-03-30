@@ -10,3 +10,4 @@ google-generativeai
 requests
 typing-extensions
 ipython
+markdown
