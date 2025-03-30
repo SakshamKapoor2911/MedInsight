@@ -537,7 +537,8 @@ def run_web_prompt(input: str):
         additional_message += "Or you can continue discussing the current condition with follow-up questions.\n"
 
     messages = state["messages"]
-    response = markdown.markdown(messages[-1]["content"] + additional_message)
+    response = messages[-1]["content"] + additional_message
+    response = markdown.markdown(response, extensions=['extra']))
     response = beautify_text(response)
     return {
         "messages": response,
