@@ -524,27 +524,35 @@ def run_web_prompt(input: str):
 
     if not state:
         state = start_medical_chat(input)
-
     elif input.lower() == 'exit':
-        reset_conversation(state)
-
+        state = None  # Reset state to None
+        return {
+            "messages": "Chat session ended. You can start a new conversation.",
+            "analysis_complete": False
+        }
     else:
         state = continue_medical_chat(state, input)
 
     additional_message = ""
     if state.get("conversation_stage") == "complete":
-        additional_message += "\nAnalysis complete. You can start a new topic by typing 'new symptom' or 'different issue'.\n"
-        additional_message += "Or you can continue discussing the current condition with follow-up questions.\n"
+        # Store the final response
+        final_response = state["messages"][-1]["content"] + additional_message
+        # Reset the state
+        state = None
+        # Add reset notification to the message
+        additional_message += "\nAnalysis complete. Starting fresh conversation. Type your new symptoms or concerns.\n"
+        return {
+            "messages": markdown.markdown(final_response + additional_message),
+            "analysis_complete": True
+        }
 
     messages = state["messages"]
-    response = messages[-1]["content"] + additional_message
-    response = markdown.markdown(response, extensions=['extra']))
-    response = beautify_text(response)
+    response = markdown.markdown(messages[-1]["content"] + additional_message)
+    
     return {
         "messages": response,
         "analysis_complete": state.get("analysis_complete", False),
     }
-#messages[-1]['content'] + additional_message
 
 if __name__ == "__main__":
     # To run the interactive demo
