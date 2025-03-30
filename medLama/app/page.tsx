@@ -107,6 +107,7 @@ export default function Home() {
       .map((msg) => msg.content)
       .join(" ");
 
+
     const criticalSymptoms = ["chest pain", "shortness of breath", "loss of consciousness", "severe headache", "numbness on one side"];
     
     let result = await analyzeSymptoms(symptoms);
@@ -114,12 +115,12 @@ export default function Home() {
     if (criticalSymptoms.some(symptom => symptoms.toLowerCase().includes(symptom))) {
       result.severity = "high";
     }
-    
+
     if (result.severity === "high") {
       const emergencyInfo = await getEmergencyInfo("current-location");
       result.emergencyInfo = emergencyInfo;
     }
-    
+
     setAnalysis(result);
     const availableDoctors = await findAvailableDoctors(result.suggestedSpecialists[0]);
     setDoctors(availableDoctors);
@@ -185,12 +186,12 @@ export default function Home() {
               Symptom Analysis
             </h2>
             <SeverityIndicator severity={analysis.severity} />
-            
+
             {analysis.severity === "high" && analysis.emergencyInfo && (
               <div className="mt-6">
-                <EmergencyPanel 
-                  info={analysis.emergencyInfo} 
-                  onCallEmergency={handleEmergencyCall} 
+                <EmergencyPanel
+                  info={analysis.emergencyInfo}
+                  onCallEmergency={handleEmergencyCall}
                 />
               </div>
             )}
@@ -216,7 +217,7 @@ export default function Home() {
               </Button>
             </div>
 
-            <Button 
+            <Button
               className="mt-8"
               onClick={handleNewConsultation}
               variant="outline"
@@ -244,8 +245,8 @@ export default function Home() {
                   }`}
                 >
                   <div className={`rounded-full p-2 ${
-                    message.role === "assistant" 
-                      ? "bg-primary/10" 
+                    message.role === "assistant"
+                      ? "bg-primary/10"
                       : "bg-secondary"
                   }`}>
                     {message.role === "assistant" ? (
@@ -276,12 +277,12 @@ export default function Home() {
 
           <div className="border-t p-4 space-y-4 bg-background/50 backdrop-blur-sm">
             {suggestions.length > 0 && (
-              <SymptomSuggestions 
-                suggestions={suggestions} 
-                onSelect={handleSuggestionSelect} 
+              <SymptomSuggestions
+                suggestions={suggestions}
+                onSelect={handleSuggestionSelect}
               />
             )}
-            
+
             <form
               onSubmit={handleSubmit}
               className="flex items-center gap-2"
@@ -292,9 +293,9 @@ export default function Home() {
                 onChange={(e) => setInput(e.target.value)}
                 className="flex-1 rounded-full bg-secondary/50"
               />
-              <Button 
-                type="submit" 
-                size="icon" 
+              <Button
+                type="submit"
+                size="icon"
                 className="rounded-full hover:glow-effect"
                 disabled={isProcessing}
               >
@@ -303,7 +304,7 @@ export default function Home() {
             </form>
 
             {isReadyForAnalysis && (
-              <Button 
+              <Button
                 className="w-full rounded-full hover:glow-effect"
                 onClick={handleAnalysis}
                 variant="default"
