@@ -380,14 +380,14 @@ export default function Home() {
         <main className="flex flex-1 flex-col items-center p-4 md:p-8">
           <Card className="w-full max-w-4xl p-6 shadow-lg glass-card">
             <div className="flex items-center mb-6">
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="mr-2 rounded-full"
                 onClick={() => setStage("chat")}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Chat
-              </Button>
+              </Button> */}
               <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
                 Symptom Analysis
               </h2>
@@ -449,12 +449,12 @@ export default function Home() {
             </div>
 
             <div className="flex justify-between mt-8">
-              <Button
+              {/* <Button
                 onClick={() => setStage("chat")}
                 variant="outline"
               >
                 Continue Chat
-              </Button>
+              </Button> */}
               <Button
                 onClick={createNewConversation}
                 variant="default"
@@ -554,7 +554,7 @@ export default function Home() {
               </Button>
             </form>
 
-            {isReadyForAnalysis && (
+            {/* {isReadyForAnalysis && (
               <Button
                 className="w-full mt-4 rounded-full hover:glow-effect"
                 onClick={handleAnalysis}
@@ -573,7 +573,7 @@ export default function Home() {
                   </>
                 )}
               </Button>
-            )}
+            )} */}
 
             <Button
               className="w-full mt-4 rounded-full hover:glow-effect"
