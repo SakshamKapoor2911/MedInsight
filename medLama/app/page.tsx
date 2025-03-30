@@ -407,16 +407,16 @@ export default function Home() {
                   <div key={idx} className="border rounded-lg p-4 bg-card/50 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                        <User className="h-6 w-6 text-primary" />
+                        <Stethoscope className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <h4 className="font-medium">{facility.name}</h4>
                         <p className="text-xs text-primary">{facility.address}</p>
                       </div>
                     </div>
-                    <Button size="sm" className="w-full">
-                      Schedule Appointment
-                    </Button>
+                    <div>
+                      <p className="text-s text-secondary">Phone: {facility.phone}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -435,6 +435,10 @@ export default function Home() {
                         <h4 className="font-medium">{doctor.name}</h4>
                         <p className="text-xs text-primary">{doctor.specialty}</p>
                       </div>
+                    </div>
+                    <div>
+                      <p className="text-s text-secondary">Phone: {doctor.phone}</p>
+                      <p className="text-s text-secondary">Email: {doctor.email}</p>
                     </div>
                     <Button size="sm" className="w-full">
                       Schedule Appointment
