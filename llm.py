@@ -63,7 +63,7 @@ def perplexity_research(query: str) -> str:
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer {PERPLEXITY_API_KEY}"
     }
     payload = {
         "model": "sonar-pro",
