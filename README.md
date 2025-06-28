@@ -53,4 +53,14 @@ This project is being developed in planned phases to ensure a robust and well-en
     * [ ] Connect the existing Next.js frontend to the new backend.
     * **Goal:** Demonstrate operational readiness and automated orchestration.
 
----
+## 🏗️ Target Architecture
+
+The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
+
+```plaintext
++---------------------+   +-----------------+   +-------------------------+   +----------------------+
+|                     |   |                 |   |                         |   |                      |
+|  Next.js Frontend   |-->|  API Gateway    |-->|  Distributed Message    |-->|  AI Agent Services   |
+| (React, TypeScript) |   |      (Go)       |   |   Queue (Go & Raft)     |   | (Python, LangGraph)  |
+|                     |   |                 |   |                         |   |                      |
++---------------------+   +-----------------+   +-------------------------+   +----------------------+
