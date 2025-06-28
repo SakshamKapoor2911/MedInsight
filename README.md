@@ -59,8 +59,8 @@ Research Node: If research is needed, the agent calls the Perplexity API tool wi
 Analysis Node: The research findings are synthesized into a final report.
 
 Response: The final report or the next question is streamed back through the API to the frontend.
-
-🛠️ Tech Stack
+```
+## 🛠️ Tech Stack
 Component
 
 Technologies Used
@@ -95,41 +95,41 @@ PERPLEXITY_API_KEY from Perplexity AI
 
 Backend Setup
 Clone the repository:
-
+```
 git clone [https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git](https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git)
 cd Full_stack_Medical_Diagnostics
-
+```
 Set up a Python virtual environment:
-
+```
 python -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-
+```
 Install Python dependencies:
-
+```
 pip install -r requirements.txt
-
+```
 Set up environment variables: Create a .env file in the root directory and add your API keys:
-
+```
 GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 PERPLEXITY_API_KEY="YOUR_PERPLEXITY_API_KEY"
-
+```
 Run the backend server: (Assuming your entry point is app.py)
-
+```
 python app.py
-
+```
 Frontend Setup
 Navigate to the frontend directory:
-
+```
 cd medLama
-
+```
 Install npm dependencies:
-
+```
 npm install
-
+```
 Run the frontend development server:
-
+```
 npm run dev
-
+```
 Open your browser and navigate to http://localhost:3000 to see the application running.
 
 🧠 The AI Agent's Core Logic
