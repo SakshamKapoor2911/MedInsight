@@ -82,6 +82,7 @@ Next.js, React, TypeScript, Tailwind CSS, MongoDB
 The original, monolithic version of MedLama (which includes the 92% accurate AI agent) can be run locally.
 
 Prerequisites
+```
 Node.js and npm
 
 Python 3.10+ and pip
@@ -89,7 +90,7 @@ Python 3.10+ and pip
 GEMINI_API_KEY from Google AI Studio
 
 PERPLEXITY_API_KEY from Perplexity AI
-
+```
 Backend Setup
 Clone the repository:
 
@@ -135,6 +136,7 @@ npm install
 Run the frontend development server:
 ```
 
-
+```
 npm run dev
+```
 Open your browser and navigate to http://localhost:3000 to see the application running.
