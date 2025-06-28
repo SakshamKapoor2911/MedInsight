@@ -61,26 +61,21 @@ Analysis Node: The research findings are synthesized into a final report.
 Response: The final report or the next question is streamed back through the API to the frontend.
 ```
 ## 🛠️ Tech Stack
-Component
 
 Technologies Used
 
 Frontend
-
+```
 Next.js, React, TypeScript, Tailwind CSS, Shadcn UI
-
+```
 Backend
-
-Python
-
-AI Agent
-
-LangGraph, LangChain, Google Gemini, Perplexity API
-
+```
+Python, LangGraph, LangChain, Google Gemini, Perplexity API
+```
 Database
-
+```
 MongoDB (for conversation history and user data)
-
+```
 ⚙️ Local Setup
 To run this project locally, you will need to set up both the backend and the frontend.
 
