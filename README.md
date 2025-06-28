@@ -43,32 +43,30 @@ The new architecture is designed for scalability and resilience. The monolithic 
 
 graph TD
     subgraph "User Layer"
-        A["<br><b>Next.js Frontend</b><br><i>(React & TypeScript)</i>"]
+        A["Next.js Frontend<br><i>(React & TypeScript)</i>"]
     end
 
     subgraph "Infrastructure Layer (Go)"
-        B["<br><b>API Gateway</b><br><i>Handles Ingress & Auth</i>"]
-        C(fa:fa-database <b>Distributed Message Queue</b><br><i>Go & Raft Consensus</i>)
+        B["API Gateway<br><i>Handles Ingress & Auth</i>"]
+        C["Distributed Message Queue<br><i>Go & Raft Consensus</i>"]
     end
 
     subgraph "AI Processing Layer (Python)"
-        D{<b>AI Agent<br>Microservices</b>}
-        E["<i>Symptom Intake Agent</i>"]
-        F["<i>Research Agent</i>"]
-        G["<i>Report Generator Agent</i>"]
+        D{AI Agent<br>Microservices}
+        E["Symptom Intake Agent"]
+        F["Research Agent"]
+        G["Report Generator Agent"]
     end
 
     subgraph "External Dependencies"
-        H[(fa:fa-cloud External APIs<br>Gemini, Perplexity)]
+        H["External APIs<br><i>(Gemini, Perplexity)</i>"]
     end
 
     A -->|"1. HTTP/WebSocket Request"| B
     B -->|"2. Publishes Task Message"| C
     C -->|"3. Consumes Task"| D
-    D --- E
-    D --- F
-    D --- G
-    F -->|"4. API Call"| H
+    D --- E & F & G
+    F -->|"4. API Call for Research"| H
 
 ### Service Responsibilities:
 
