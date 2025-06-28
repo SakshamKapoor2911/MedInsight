@@ -41,7 +41,7 @@ The core of the system is a sophisticated AI agent, built with **LangGraph**, th
 
 The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
 
-<pre><code>```mermaid 
+```mermaid 
   
 graph TD
     subgraph "User Layer"
@@ -70,7 +70,7 @@ graph TD
     D --- E & F & G
     F -->|"4. API Call for Research"| H
   
-```</code></pre>
+```
 ### Service Responsibilities:
 
   * **API Gateway (Go):** A single, high-performance entry point for all client traffic. It is responsible for routing requests to the appropriate internal services, handling SSL termination, and implementing security measures like authentication and rate limiting.
