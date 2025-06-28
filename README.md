@@ -41,8 +41,8 @@ API Gateway (Go): A single, high-performance entry point for all client traffic,
 Distributed Message Queue (Go & Raft): The asynchronous backbone of the system, ensuring reliable, fault-tolerant communication between services.
 
 AI Agent Services (Python): The core agent logic, broken into smaller microservices that can be scaled independently (e.g., Intake, Research, Synthesis).
-
-🗺️ Project Roadmap
+```
+## 🗺️ Project Roadmap
 This project is being developed in planned phases. The source code for the new Go-based services will be hosted in a separate repository upon completion of Phase 1.
 
 Phase 1: Distributed Message Queue Core (In Progress - Est. Q3 2025)
@@ -71,7 +71,7 @@ Phase 3: Kubernetes Deployment (Planned Q1 2026)
 
 Goal: Demonstrate operational readiness and automated orchestration.
 
-🛠️ Technology Stack
+## 🛠️ Technology Stack
 Backend Systems & Architecture
 Go, Docker, Kubernetes, Raft Consensus Algorithm, gRPC
 AI & Application Logic
@@ -93,44 +93,48 @@ PERPLEXITY_API_KEY from Perplexity AI
 Backend Setup
 Clone the repository:
 
-Bash
 
+```
 git clone [https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git](https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git)
 cd Full_stack_Medical_Diagnostics
+```
 Set up a Python virtual environment:
 
-Bash
 
+```
 python -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
 Install Python dependencies:
 
-Bash
 
+```
 pip install -r requirements.txt
+```
 Set up environment variables: Create a .env file in the root directory and add your API keys:
-
+```
 GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 PERPLEXITY_API_KEY="YOUR_PERPLEXITY_API_KEY"
+```
 Run the backend server: (Assuming your entry point is app.py)
 
-Bash
 
+```
 python app.py
 Frontend Setup
 Navigate to the frontend directory:
+```
 
-Bash
-
+```
 cd medLama
 Install npm dependencies:
+```
 
-Bash
-
+```
 npm install
 Run the frontend development server:
+```
 
-Bash
 
 npm run dev
 Open your browser and navigate to http://localhost:3000 to see the application running.
