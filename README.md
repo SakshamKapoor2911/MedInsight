@@ -163,10 +163,5 @@ The original, monolithic version of MedLama (which includes the 92% accurate AI 
 4.  Open your browser and navigate to `http://localhost:3000` to see the application running.
 
 -----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome\! Feel free to check the [issues page](https://www.google.com/search?q=https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics/issues).
-
 ```
 ```
