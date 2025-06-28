@@ -41,14 +41,34 @@ The core of the system is a sophisticated AI agent, built with **LangGraph**, th
 
 The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
 
-```plaintext
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
-|                     |   |                 |   |                         |   |                      |
-|  Next.js Frontend   |-->|  API Gateway    |-->|  Distributed Message    |-->|  AI Agent Services   |
-| (React, TypeScript) |   |      (Go)       |   |   Queue (Go & Raft)     |   | (Python, LangGraph)  |
-|                     |   |                 |   |                         |   |                      |
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
-````
+graph TD
+    subgraph "User Layer"
+        A["<br><b>Next.js Frontend</b><br><i>(React & TypeScript)</i>"]
+    end
+
+    subgraph "Infrastructure Layer (Go)"
+        B["<br><b>API Gateway</b><br><i>Handles Ingress & Auth</i>"]
+        C(fa:fa-database <b>Distributed Message Queue</b><br><i>Go & Raft Consensus</i>)
+    end
+
+    subgraph "AI Processing Layer (Python)"
+        D{<b>AI Agent<br>Microservices</b>}
+        E["<i>Symptom Intake Agent</i>"]
+        F["<i>Research Agent</i>"]
+        G["<i>Report Generator Agent</i>"]
+    end
+
+    subgraph "External Dependencies"
+        H[(fa:fa-cloud External APIs<br>Gemini, Perplexity)]
+    end
+
+    A -->|"1. HTTP/WebSocket Request"| B
+    B -->|"2. Publishes Task Message"| C
+    C -->|"3. Consumes Task"| D
+    D --- E
+    D --- F
+    D --- G
+    F -->|"4. API Call"| H
 
 ### Service Responsibilities:
 
