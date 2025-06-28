@@ -84,7 +84,8 @@ MongoDB (for conversation history and user data)
 ⚙️ Local Setup
 To run this project locally, you will need to set up both the backend and the frontend.
 
-Prerequisites
+Prerequisites  
+```
 Node.js and npm
 
 Python 3.10+ and pip
@@ -92,7 +93,7 @@ Python 3.10+ and pip
 GEMINI_API_KEY from Google AI Studio
 
 PERPLEXITY_API_KEY from Perplexity AI
-
+```
 Backend Setup
 Clone the repository:
 ```
