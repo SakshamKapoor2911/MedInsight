@@ -41,19 +41,36 @@ The core of the system is a sophisticated AI agent, built with **LangGraph**, th
 
 The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
 
-```plaintext
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
-|                     |   |                 |   |                         |   |                      |
-|  Next.js Frontend   |-->|  API Gateway    |-->|  Distributed Message    |-->|  AI Agent Services   |
-| (React, TypeScript) |   |      (Go)       |   |   Queue (Go & Raft)     |   | (Python, LangGraph)  |
-|                     |   |                 |   |                         |   |                      |
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
-API Gateway (Go): A single, high-performance entry point for all client traffic, responsible for routing, authentication, and rate limiting.
+<pre><code>```mermaid 
+  
+graph TD
+    subgraph "User Layer"
+        A["Next.js Frontend<br><i>(React & TypeScript)</i>"]
+    end
 
-Distributed Message Queue (Go & Raft): The asynchronous backbone of the system, ensuring reliable, fault-tolerant communication between services.
+    subgraph "Infrastructure Layer (Go)"
+        B["API Gateway<br><i>Handles Ingress & Auth</i>"]
+        C["Distributed Message Queue<br><i>Go & Raft Consensus</i>"]
+    end
 
-AI Agent Services (Python): The core agent logic, broken into smaller microservices that can be scaled independently (e.g., Intake, Research, Synthesis).
-```
+    subgraph "AI Processing Layer (Python)"
+        D{AI Agent<br>Microservices}
+        E["Symptom Intake Agent"]
+        F["Research Agent"]
+        G["Report Generator Agent"]
+    end
+
+    subgraph "External Dependencies"
+        H["External APIs<br><i>(Gemini, Perplexity)</i>"]
+    end
+
+    A -->|"1. HTTP/WebSocket Request"| B
+    B -->|"2. Publishes Task Message"| C
+    C -->|"3. Consumes Task"| D
+    D --- E & F & G
+    F -->|"4. API Call for Research"| H
+  
+```</code></pre>
 ### Service Responsibilities:
 
   * **API Gateway (Go):** A single, high-performance entry point for all client traffic. It is responsible for routing requests to the appropriate internal services, handling SSL termination, and implementing security measures like authentication and rate limiting.
