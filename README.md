@@ -1,10 +1,6 @@
 # MedLama: AI-Powered Medical Diagnostics Assistant
 
 <p align="center">
-  <img src="https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics/blob/main/medLama/public/pic_agent.png" alt="MedLama UI" width="800"/>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
