@@ -1,47 +1,56 @@
 # MedLama: A Scalable, AI-Powered Medical Diagnostics Platform
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
-  <img src="https://img.shields.io/badge/LangGraph-black?style=for-the-badge&logo=langchain&logoColor=white" alt="LangGraph">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
-</p>
+  </p>
 
 ## 🚀 Project Vision
 
-**MedLama** is an advanced AI platform designed to conduct preliminary medical diagnostic consultations. The core of this platform is a sophisticated agent, built with **LangGraph** and **Gemini**, which has **achieved 92% diagnostic accuracy** against a medical expert's evaluation of a complex disease case.
+**MedLama** is an advanced, AI-powered platform designed to simulate preliminary medical diagnostic consultations. Originally a full-stack application, the project is currently being re-architected into a **resilient, distributed system** capable of handling high-concurrency workloads.
 
-The project is currently undergoing a significant architectural evolution, migrating from a monolithic Python application to a **resilient, distributed system** built with **Go** and orchestrated by **Kubernetes**. This will ensure high availability, fault tolerance, and the ability to scale to handle high-concurrency workloads.
+The core of the system is a sophisticated AI agent, built with **LangGraph**, that achieved **92% diagnostic accuracy** against a medical expert's evaluation. This agent is being transitioned to run on a scalable microservices backend powered by **Go** and orchestrated by **Kubernetes**.
 
 ---
 
 ## 📋 Table of Contents
 * [Key Features](#-key-features)
-* [Target Architecture](#️-target-architecture)
+* [System Architecture](#️-system-architecture)
 * [Project Roadmap](#-project-roadmap)
-* [Technology Stack](#️-technology-stack)
-* [Running the Prototype](#-running-the-prototype)
+* [Tech Stack](#️-tech-stack)
+* [Local Setup](#️-local-setup)
 
 ---
 
 ## ✨ Key Features
 
-* **Proven Diagnostic Accuracy:** The core AI agent has been benchmarked at **92% accuracy** against a medical expert.
-* **Scalable Backend Architecture:** The new system is being built on a **microservices architecture** using **Go** for high performance and low-latency communication.
-* **Fault-Tolerant by Design:** The system's backbone is a high-throughput message queue leveraging the **Raft consensus algorithm** for data replication and cluster resilience.
-* **Advanced Agentic Workflow:** The AI agent uses **LangGraph** to manage a robust, multi-step conversational state, allowing it to reason and autonomously use tools.
-* **Modern Frontend:** A responsive and interactive user interface built with **Next.js** and **TypeScript**.
+* **Scalable Backend Architecture:** The system is built on a **microservices architecture** using **Go**, designed for high availability and horizontal scaling.
+* **Fault-Tolerant Communication:** A custom message queue built with **Go** and the **Raft consensus algorithm** ensures asynchronous, reliable communication between services.
+* **Stateful Agentic Workflow:** The core AI agent, engineered with **LangGraph**, manages a robust, multi-step conversational workflow.
+* **Autonomous Tool Use:** The agent intelligently determines when to invoke external research tools (**Perplexity API**) to deepen its analysis.
+* **Full-Stack Implementation:** A complete application featuring a modern frontend built with **Next.js** and **TypeScript**.
 
-## 🏗️ Target Architecture
+## 🏗️ System Architecture
 
-The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
+The new architecture is designed for scalability and resilience. For a detailed breakdown of the services and design patterns used, please see the [**System Architecture Documentation**](./ARCHITECTURE.md).
 
-```plaintext
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
-|                     |   |                 |   |                         |   |                      |
-|  Next.js Frontend   |-->|  API Gateway    |-->|  Distributed Message    |-->|  AI Agent Services   |
-| (React, TypeScript) |   |      (Go)       |   |   Queue (Go & Raft)     |   | (Python, LangGraph)  |
-|                     |   |                 |   |                         |   |                      |
-+---------------------+   +-----------------+   +-------------------------+   +----------------------+
+## 🗺️ Project Roadmap
+
+This project is being developed in planned phases to ensure a robust and well-engineered final product.
+
+* **Phase 1: Distributed Message Queue Core (In Progress)**
+    * [ ] Build the core message queue in Go with a gRPC API.
+    * [ ] Integrate the Raft consensus algorithm via `hashicorp/raft`.
+    * [ ] Containerize the service with Docker.
+    * **Goal:** Create the fault-tolerant, distributed backbone for the entire system.
+
+* **Phase 2: AI Agent Integration (Planned Q3 2025)**
+    * [ ] Adapt the existing Python AI agents to communicate via the message queue.
+    * [ ] Implement producer/consumer logic for asynchronous task handling.
+    * **Goal:** Decouple the AI logic into independent, scalable microservices.
+
+* **Phase 3: Kubernetes Deployment (Planned Q4 2025)**
+    * [ ] Write Kubernetes manifests for all services.
+    * [ ] Deploy the full application to a cloud-based Kubernetes cluster.
+    * [ ] Connect the existing Next.js frontend to the new backend.
+    * **Goal:** Demonstrate operational readiness and automated orchestration.
+
+---
