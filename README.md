@@ -41,7 +41,7 @@ The core of the system is a sophisticated AI agent, built with **LangGraph**, th
 
 The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
 
-
+```plaintext
 +---------------------+   +-----------------+   +-------------------------+   +----------------------+
 |                     |   |                 |   |                         |   |                      |
 |  Next.js Frontend   |-->|  API Gateway    |-->|  Distributed Message    |-->|  AI Agent Services   |
@@ -53,7 +53,7 @@ API Gateway (Go): A single, high-performance entry point for all client traffic,
 Distributed Message Queue (Go & Raft): The asynchronous backbone of the system, ensuring reliable, fault-tolerant communication between services.
 
 AI Agent Services (Python): The core agent logic, broken into smaller microservices that can be scaled independently (e.g., Intake, Research, Synthesis).
-
+```
 ### Service Responsibilities:
 
   * **API Gateway (Go):** A single, high-performance entry point for all client traffic. It is responsible for routing requests to the appropriate internal services, handling SSL termination, and implementing security measures like authentication and rate limiting.
