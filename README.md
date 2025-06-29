@@ -132,7 +132,7 @@ A polyglot approach was chosen to use the best tool for each specific job.
 
 ## ⚙️ Running the Prototype
 
-The original, monolithic version of MedLama (which includes the 92% accurate AI agent) can be run locally.
+The original, monolithic version of MedLama (which includes the functioning accurate AI agent) can be run locally.
 
 ### Prerequisites
 
