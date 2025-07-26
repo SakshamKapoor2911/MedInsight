@@ -66,4 +66,30 @@ This document outlines a 15-day, phase-based plan to build the MedLama platform�
 - Containerization and cloud-native deployment
 
 
-*Built with ❤️ to organize the world’s healthcare information, making it universally accessible and useful.*
+
+## Best Practices for Solo Development, Testing, and Integration
+
+**Development Workflow**
+- Use clear commit messages and maintain a logical commit history.
+- Regularly push changes to a remote repository for backup and version control.
+- Keep documentation (README, API docs, architecture notes) up to date as you build.
+
+**Testing**
+- Write unit tests for all critical logic in each microservice.
+- Aim for high test coverage (>80%) to catch regressions early.
+- Use automated test runners (e.g., `go test`, `pytest`, `jest`) before major commits.
+- Mock external APIs/services in tests for reliability.
+
+**Integration**
+- Use Docker Compose to run all services locally for end-to-end testing.
+- Regularly test integration points between backend, AI/ML, and frontend.
+- Use a simple CI workflow (e.g., GitHub Actions) for automated builds and tests.
+- Containerize all services for consistency between local and cloud environments.
+
+**General Tips**
+- Refactor code regularly to keep it clean and maintainable.
+- Take notes on engineering decisions and architectural changes.
+- Use AI tools for code review, suggestions, and troubleshooting.
+
+
+*And most importantly, build with ❤️ to organize the world’s healthcare information, making it universally accessible and useful.*
