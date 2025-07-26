@@ -1,184 +1,236 @@
-# MedLama: A Scalable, AI-Powered Medical Diagnostics Platform
+
+# MedLama - AI-Powered Medical Diagnostics Platform
+
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
-  <img src="https://img.shields.io/badge/LangGraph-black?style=for-the-badge&logo=langchain&logoColor=white" alt="LangGraph">
   <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+  <img src="https://img.shields.io/badge/LangGraph-4B8BBE?style=for-the-badge&logo=python&logoColor=white" alt="LangGraph">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+  <img src="https://img.shields.io/badge/Perplexity-000000?style=for-the-badge&logo=perplexity&logoColor=white" alt="Perplexity">
 </p>
 
-## 🚀 Project Vision
-
-**MedLama** is an advanced AI platform designed to simulate preliminary medical diagnostic consultations. This project aims to provide accessible, preliminary medical information while serving as a robust case study in designing scalable, AI-driven distributed systems.
-
-The core of the system is a sophisticated AI agent, built with **LangGraph**, that achieved **92% diagnostic accuracy** against a medical expert's evaluation. Originally a full-stack application, the project is currently being re-architected into a **resilient, distributed system** capable of handling high-concurrency workloads using Go and Kubernetes.
-
----
+**Target Company:** Google Health
 
 ## 📋 Table of Contents
+* [Core Concept](#-core-concept)
+* [System Architecture](#️-system-architecture)
 * [Key Features](#-key-features)
-* [Target Architecture](#️-target-architecture)
-* [Engineering Challenges & Solutions](#-engineering-challenges--solutions)
-* [Project Roadmap](#-project-roadmap)
-* [Technology Stack & Rationale](#️-technology-stack--rationale)
-* [Running the Prototype](#-running-the-prototype)
-* [Contributing](#-contributing)
+* [Technology Stack](#-technology-stack)
+* [Engineering Challenges](#-engineering-challenges--solutions)
+* [Prerequisites](#-prerequisites)
+* [Getting Started](#️-getting-started)
+* [Running Tests](#-running-tests)
+* [Industry-Aligned Features](#-industry-aligned-features)
+
+
+## 🌟 Core Concept
+
+MedLama is a cloud-native, microservices-based platform for preliminary medical diagnostics. It combines:
+- A high-performance Go backend for API gateway, message queue, and infrastructure
+- A Python AI/ML microservice using LangGraph, Gemini, and Perplexity APIs for advanced medical reasoning
+- A modern Next.js frontend for seamless user experience
+
+This architecture enables independent team development, robust scalability, and clear separation of concerns. The system is designed for reliability, extensibility, and real-world healthcare impact.
+
+## 🏗️ System Architecture
+
+
+```mermaid
+graph TD
+    subgraph Frontend
+        A[Next.js Frontend]
+    end
+    subgraph Go Backend Microservice
+        B[API Gateway (Go)]
+        C[Message Queue (Go, Raft)]
+        F[Auth Service (Go)]
+        E[MongoDB]
+    end
+    subgraph Python AI/ML Microservice
+        D[AI Agent Service (LangGraph, Python)]
+        H[Emergency Detection (Python)]
+    end
+    subgraph External APIs
+        I[Gemini API]
+        J[Perplexity API]
+    end
+
+    A-- REST/WS -->B
+    B-- Auth -->F
+    B-- DB Ops -->E
+    B-- Queue -->C
+    C-- Task Dispatch -->D
+    D-- LLM Calls -->I
+    D-- Research -->J
+    D-- Store/Read -->E
+    D-- Emergency -->H
+    H-- Alert -->B
+```
+
+
+
+## 🗂️ Project Folder Layout
+
+The project is organized as three main microservices, each in its own directory for clear separation of concerns and team independence:
+
+```
+Full_stack_Medical_Diagnostics/
+├── services/
+│   ├── backend-service/      # Go backend: API gateway, message queue, auth, DB ops
+│   ├── ai-service/           # Python AI/ML: LangGraph agents, LLM integration, research
+│   └── frontend/             # Next.js frontend: UI, user flows, API integration
+├── deployment/               # Docker Compose, Kubernetes manifests, CI/CD
+├── scripts/                  # Utility scripts
+└── README.md
+```
+
+**Benefits of this layout:**
+- Enables Go, Python, and Frontend teams to work independently and in parallel
+- Makes it easy to isolate, debug, and deploy each service separately
+- Supports scalable, modular development and clear code ownership
+- Simplifies onboarding for new contributors by clarifying service boundaries
+- Facilitates containerization and cloud-native deployment
 
 ---
 
-## ✨ Key Features
+## 📦 Key Features
+- [ ] AI-powered symptom triage and diagnostic reasoning
+- [ ] Multi-turn, context-aware conversation state
+- [ ] Emergency detection and escalation
+- [ ] Real-time notifications and alerts
+- [ ] Secure user authentication and data privacy
+- [ ] Modern, responsive frontend (Next.js, TypeScript)
+- [ ] Efficient storage and retrieval of medical conversations
+- [ ] Modular microservices for scalability
 
-* **Proven Diagnostic Accuracy:** The core AI agent has been benchmarked at **92% accuracy** against a medical expert on a complex disease case, demonstrating its effectiveness.
-* **Scalable Microservices Architecture:** The system is built using **Go** microservices, allowing for independent scaling of components like API handling and AI processing to meet demand efficiently.
-* **Fault-Tolerant by Design:** The system's backbone is a high-throughput message queue leveraging the **Raft consensus algorithm**. This allows the system to withstand the failure of individual server nodes without data loss or service interruption.
-* **Asynchronous Processing:** The message queue decouples the client-facing services from the backend AI agents, allowing for long-running diagnostic tasks to be processed in the background without blocking the user interface.
-* **Advanced Agentic Workflow:** The AI agent uses **LangGraph** to manage a robust, multi-step conversational state, allowing it to reason, use external tools autonomously, and handle complex conversational flows.
-* **Modern Frontend:** A responsive and interactive user interface built with **Next.js** and **TypeScript** for a seamless user experience.
-
-## 🏗️ Target Architecture
-
-The new architecture is designed for scalability and resilience. The monolithic backend is being decomposed into a set of independent, communicating microservices.
-
-```mermaid 
-  
-graph TD
-    subgraph "User Layer"
-        A["Next.js Frontend<br><i>(React & TypeScript)</i>"]
-    end
-
-    subgraph "Infrastructure Layer (Go)"
-        B["API Gateway<br><i>Handles Ingress & Auth</i>"]
-        C["Distributed Message Queue<br><i>Go & Raft Consensus</i>"]
-    end
-
-    subgraph "AI Processing Layer (Python)"
-        D{AI Agent<br>Microservices}
-        E["Symptom Intake Agent"]
-        F["Research Agent"]
-        G["Report Generator Agent"]
-    end
-
-    subgraph "External Dependencies"
-        H["External APIs<br><i>(Gemini, Perplexity)</i>"]
-    end
-
-    A -->|"1. HTTP/WebSocket Request"| B
-    B -->|"2. Publishes Task Message"| C
-    C -->|"3. Consumes Task"| D
-    D --- E & F & G
-    F -->|"4. API Call for Research"| H
-  
-```
-### Service Responsibilities:
-
-  * **API Gateway (Go):** A single, high-performance entry point for all client traffic. It is responsible for routing requests to the appropriate internal services, handling SSL termination, and implementing security measures like authentication and rate limiting.
-  * **Distributed Message Queue (Go & Raft):** The asynchronous backbone of the system. It persists user requests and tasks, guaranteeing message delivery even if consuming services are temporarily unavailable. Its use of the Raft consensus algorithm ensures data is replicated across multiple nodes for high availability.
-  * **AI Agent Services (Python):** The core agent logic is broken into smaller, specialized microservices (e.g., `symptom-intake`, `research-agent`, `report-generator`). Each service is a consumer of the message queue, allowing them to be scaled independently based on their specific workload.
+## ☁️ Technology Stack
+| Category      | Technology                                 | Rationale                                                                 |
+|--------------|--------------------------------------------|--------------------------------------------------------------------------|
+| Backend Infrastructure | Go, gRPC, Raft Consensus, Docker        | High-performance API gateway, message queue, and infrastructure         |
+| AI/ML Service         | Python, FastAPI/Flask, LangGraph, LangChain | Advanced medical reasoning, stateful workflows, LLM integration         |
+| LLM APIs              | Gemini API, Perplexity API                | Real-time medical research and diagnostic reasoning                      |
+| Frontend              | Next.js, React, TypeScript                | Modern, type-safe, performant UI                                        |
+| Database              | MongoDB                                   | Flexible document store for conversation history                        |
+| Real-time             | WebSockets                                | Live chat and notifications                                             |
+| Container             | Docker                                    | Consistent, portable deployments                                        |
+| Orchestration         | Kubernetes (future phases)                | Scalability and resilience                                              |
+| Testing               | Pytest, Jest, Cypress                     | Comprehensive backend and frontend testing                              |
 
 ## 🧠 Engineering Challenges & Solutions
 
-Building a distributed AI system presents unique challenges. Here’s how this architecture addresses them:
+### Challenge 1: Real-time, Multi-turn Conversation State
+**Problem:** Maintaining context and accuracy across complex, multi-step medical dialogues.
+**Solution:** Use LangGraph to manage robust conversational state and enable tool-using agent workflows.
 
-  * **Challenge: Maintaining Conversation State**
+### Challenge 2: Emergency Detection & Escalation
+**Problem:** Identifying urgent medical cases in real time and triggering appropriate alerts.
+**Solution:** Dedicated microservice for emergency detection, with real-time notification integration.
 
-      * **Problem:** In a stateless, distributed environment, how do you track a multi-turn conversation across potentially many replicas of the AI services?
-      * **Solution:** Conversational state and session data are passed as part of the messages in the queue. This decouples state from the services themselves, allowing any available `AI Agent Service` to process the next step in a conversation.
+### Challenge 3: Data Privacy & Security
+**Problem:** Ensuring sensitive health data is protected and compliant with regulations.
+**Solution:** Secure authentication, encrypted storage, and strict access controls throughout the stack.
 
-  * **Challenge: Ensuring Low-Latency Interaction**
 
-      * **Problem:** AI models can have high inference latency. How do we provide a responsive user experience without making the user wait for long-running processes?
-      * **Solution:** The system uses an asynchronous, message-based architecture. The API Gateway immediately acknowledges a user's request and sends it to the message queue. The frontend can then use WebSockets or polling to receive the AI's response once the background processing is complete.
+## 📋 Prerequisites
 
-  * **Challenge: Service Discovery & Load Balancing**
+- Go 1.22+
+- Python 3.10+
+- Node.js 18+
+- MongoDB (local or Atlas)
+- `GEMINI_API_KEY` (Google Gemini)
+- `PERPLEXITY_API_KEY` (Perplexity)
 
-      * **Problem:** How do services find and communicate with each other in an environment where instances are constantly being created and destroyed?
-      * **Solution:** The entire system is designed to be deployed on **Kubernetes**, which provides built-in DNS-based service discovery and load balancing, abstracting away the complexity of inter-service communication.
+## 🛠️ Getting Started
 
-## 🗺️ Project Roadmap
 
-This project is being developed in planned phases. The source code for the new Go-based services will be hosted in a separate repository upon completion of Phase 1.
-
-  * **Phase 1: Distributed Message Queue Core (In Progress - Est. Q3 2025)**
-
-      * [ ] Build the core message queue in Go with a gRPC API.
-      * [ ] Integrate the Raft consensus algorithm via `hashicorp/raft`.
-      * [ ] Containerize the service with Docker.
-      * **Goal:** Create the fault-tolerant, distributed backbone for the system.
-
-  * **Phase 2: AI Agent Integration (Planned Q4 2025)**
-
-      * [ ] Adapt the existing Python AI agents to communicate via the message queue.
-      * [ ] Implement producer/consumer logic for asynchronous task handling.
-      * **Goal:** Decouple the AI logic into independent, scalable microservices.
-
-  * **Phase 3: Kubernetes Deployment (Planned Q1 2026)**
-
-      * [ ] Write Kubernetes manifests for all services.
-      * [ ] Deploy the full application to a cloud-based Kubernetes cluster.
-      * **Goal:** Demonstrate operational readiness and automated orchestration.
-
-## 🛠️ Technology Stack & Rationale
-
-A polyglot approach was chosen to use the best tool for each specific job.
-
-| Category                      | Technology                                | Rationale                                                                        |
-| ----------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
-| **Backend Systems** | Go, gRPC, Raft Consensus                  | **Go** was chosen for its high performance, excellent concurrency model, and low memory footprint, making it ideal for network services like gateways and message queues. |
-| **AI & Application Logic** | Python, LangGraph, LangChain, Gemini      | **Python** offers an unparalleled ecosystem for AI/ML development. **LangGraph** provides the framework for building complex, stateful AI agents. |
-| **Containerization & Orchestration** | Docker, Kubernetes               | **Docker** provides containerization for predictable deployments. **Kubernetes** is the industry standard for orchestrating, scaling, and managing containerized applications. |
-| **Frontend & Database** | Next.js, React, TypeScript, MongoDB       | **Next.js** and **TypeScript** enable the creation of a modern, type-safe, and performant user interface. **MongoDB** provides a flexible document store for conversation history. |
-
-## ⚙️ Running the Prototype
-
-The original, monolithic version of MedLama (which includes the functioning AI agent) can be run locally.
-
-### Prerequisites
-
-  * Node.js and npm
-  * Python 3.10+ and pip
-  * `GEMINI_API_KEY` from Google AI Studio
-  * `PERPLEXITY_API_KEY` from Perplexity AI
-
-### Backend Setup
-
-1.  **Clone the repository:**
+### Go Backend Setup
+1. Navigate to the Go backend service:
     ```bash
-    git clone [https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git](https://github.com/SakshamKapoor2911/Full_stack_Medical_Diagnostics.git)
-    cd Full_stack_Medical_Diagnostics
+    cd services/backend-service
     ```
-2.  **Set up a Python virtual environment:**
+2. Install dependencies:
+    ```bash
+    go mod tidy
+    ```
+3. Build and run the Go backend:
+    ```bash
+    go run ./cmd/main.go
+    ```
+
+### Python AI/ML Service Setup
+1. Navigate to the Python AI/ML service:
+    ```bash
+    cd services/ai-service
+    ```
+2. Set up a Python virtual environment:
     ```bash
     python -m venv venv
-    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
-3.  **Install Python dependencies:**
+3. Install Python dependencies:
     ```bash
     pip install -r requirements.txt
     ```
-4.  **Set up environment variables:** Create a `.env` file in the root directory and add your API keys:
-    ```
-    GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-    PERPLEXITY_API_KEY="YOUR_PERPLEXITY_API_KEY"
-    ```
-5.  **Run the backend server:** (Assuming your entry point is `app.py`)
+4. Set up environment variables:
+    - Create a `.env` file in the ai-service directory and add your API keys.
+5. Run the AI/ML service:
     ```bash
-    python app.py
+    python -m api.main
     ```
 
 ### Frontend Setup
-
-1.  **Navigate to the frontend directory:**
+1. Navigate to the frontend directory:
     ```bash
-    cd medLama
+    cd services/frontend
     ```
-2.  **Install npm dependencies:**
+2. Install dependencies:
     ```bash
     npm install
     ```
-3.  **Run the frontend development server:**
+3. Run the frontend:
     ```bash
     npm run dev
     ```
-4.  Open your browser and navigate to `http://localhost:3000` to see the application running.
+
+
+## 🧪 Running Tests
+
+- **Go Backend Tests:**
+    ```bash
+    cd services/backend-service
+    go test ./...
+    ```
+- **Python AI/ML Service Tests:**
+    ```bash
+    cd services/ai-service
+    pytest
+    ```
+- **Frontend Tests:**
+    ```bash
+    cd services/frontend
+    npm test
+    ```
+
+## 🎯 Industry-Aligned Features
+| Focus Area                | Implementation Example                        | Why It Matters                                 |
+|---------------------------|-----------------------------------------------|------------------------------------------------|
+| Conversational AI         | Multi-turn, context-aware agent               | Simulates real consultations                   |
+| Emergency Handling        | Real-time detection & escalation              | Patient safety, critical for healthcare        |
+| Data Privacy & Security   | Encrypted storage, secure auth                | Regulatory compliance, user trust              |
+| Scalable Microservices    | Modular Go/Python backend, containerized deployment | Handles high concurrency, easy to extend   |
+| Modern UX                 | Next.js, responsive design                    | User engagement, accessibility                 |
+
+
+### Why MedLama Appeals to Google Health
+- Demonstrates scalable, AI-driven healthcare solutions
+- Focus on patient safety and data privacy
+- Modern, modular architecture for rapid innovation
+- Real-world engineering challenges and solutions
+- Clear separation of Go, Python, and Frontend services for team scalability
+
+---
+
+*Built with ❤️ to organize the world’s healthcare information, making it universally accessible and useful.*
