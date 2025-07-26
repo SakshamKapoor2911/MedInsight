@@ -37,27 +37,18 @@ This architecture enables independent team development, robust scalability, and 
 
 ## 🏗️ System Architecture
 
-
 ```mermaid
 graph TD
-    subgraph Frontend
-        A[Next.js Frontend]
-    end
-    subgraph Go Backend Microservice
-        B[API Gateway (Go)]
-        C[Message Queue (Go, Raft)]
-        F[Auth Service (Go)]
-        E[MongoDB]
-    end
-    subgraph Python AI/ML Microservice
-        D[AI Agent Service (LangGraph, Python)]
-        H[Emergency Detection (Python)]
-    end
-    subgraph External APIs
-        I[Gemini API]
-        J[Perplexity API]
-    end
-
+    A[Next.js Frontend]
+    B[API Gateway (Go)]
+    C[Message Queue (Go, Raft)]
+    D[AI Agent Service (LangGraph, Python)]
+    E[MongoDB]
+    F[Auth Service (Go)]
+    H[Emergency Detection (Python)]
+    I[Gemini API]
+    J[Perplexity API]
+    
     A-- REST/WS -->B
     B-- Auth -->F
     B-- DB Ops -->E
@@ -68,6 +59,24 @@ graph TD
     D-- Store/Read -->E
     D-- Emergency -->H
     H-- Alert -->B
+    
+    subgraph "Frontend"
+        A
+    end
+    subgraph "Go Backend Microservice"
+        B
+        C
+        F
+        E
+    end
+    subgraph "Python AI/ML Microservice"
+        D
+        H
+    end
+    subgraph "External APIs"
+        I
+        J
+    end
 ```
 
 
