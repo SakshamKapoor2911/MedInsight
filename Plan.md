@@ -5,9 +5,9 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 
 ## Phase 1: Project Scaffolding & Infrastructure (Days 1-2)
 - [ ] Initialize repository and folder structure for all microservices:
-    - Go backend (`services/backend-service`): API gateway, message queue, auth, DB ops
+    - Go backend (`services/backend-service`): API gateway, Google Pub/Sub messaging, auth, DB ops
     - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration, emergency detection
-    - Next.js frontend (`services/frontend`): UI, user flows, API integration
+    - Angular frontend (`services/frontend`): UI, components, services, API integration
 - [ ] Set up Python virtual environment, Go module, and Node.js workspace
 - [ ] Add basic README, .gitignore, and requirements files for each service
 - [ ] Create Docker configuration for local development (all services)
@@ -15,7 +15,7 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 - [ ] Scaffold deployment directory for Docker Compose, Kubernetes manifests, and CI/CD
 
 ## Phase 2: Core Backend & AI/ML Services (Days 3-5)
-- [ ] Implement Go backend skeleton (API gateway, message queue, authentication, DB ops)
+- [ ] Implement Go backend skeleton (API gateway, Google Pub/Sub messaging, authentication, DB ops)
 - [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state, emergency detection)
 - [ ] Add endpoints for user authentication, conversation, and research
 - [ ] Connect both backend and AI/ML service to MongoDB for storing conversation history
@@ -23,38 +23,38 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 - [ ] Write unit tests for backend and AI/ML logic
 
 ## Phase 3: Frontend Development (Days 6-8)
-- [ ] Scaffold Next.js + TypeScript frontend
-- [ ] Implement authentication screens and chat UI
+- [ ] Scaffold Angular + TypeScript frontend using Angular CLI
+- [ ] Implement authentication screens and chat UI with Angular components and services
 - [ ] Connect frontend to backend API (REST/WebSocket)
 - [ ] Add real-time updates for chat and notifications
 - [ ] Style with modern, responsive design
-- [ ] Write frontend unit tests (Jest)
+- [ ] Write frontend unit tests (Karma/Jasmine)
 
 ## Phase 4: Real-time Features & Emergency Handling (Days 9-10)
-- [ ] Implement WebSocket support for live chat and alerts (Go backend, frontend)
+- [ ] Implement WebSocket support for live chat and alerts (Go backend, Angular frontend)
 - [ ] Build and integrate emergency detection microservice (Python AI/ML)
 - [ ] Integrate notification/alert system (backend, AI/ML, frontend)
 - [ ] Add escalation logic for urgent cases
 - [ ] Write integration tests for real-time and emergency flows
 
 ## Phase 5: Testing & Quality Assurance (Days 11-12)
-- [ ] Achieve >80% unit test coverage (Go backend, Python AI/ML, frontend)
+- [ ] Achieve >80% unit test coverage (Go backend, Python AI/ML, Angular frontend)
 - [ ] Implement integration tests for critical user journeys (all services)
-- [ ] Add end-to-end tests (Cypress)
+- [ ] Add end-to-end tests (Cypress or Protractor)
 - [ ] Perform security and privacy review (data privacy, secure auth, encrypted storage)
 
 ## Phase 6: Cloud/Deployment & Monitoring (Days 13-14)
-- [ ] Containerize all microservices (Go backend, Python AI/ML, frontend) with Docker
+- [ ] Containerize all microservices (Go backend, Python AI/ML, Angular frontend) with Docker
 - [ ] Prepare Kubernetes manifests for deployment (all services)
 - [ ] Set up CI/CD pipeline for automated builds and tests
-- [ ] Deploy to cloud (e.g., GCP, AWS, or Azure)
+- [ ] Deploy to cloud (preferably GCP for Google Pub/Sub and Angular alignment)
 - [ ] Add monitoring and alerting (basic dashboards, health checks)
 
 ## Phase 7: Documentation & Final Review (Day 15)
 - [ ] Update README and API documentation (Swagger/OpenAPI)
 - [ ] Add architecture diagrams and deployment instructions
 - [ ] Document engineering decisions and patterns
-- [ ] Conduct UI/UX and code quality review
+- [ ] Conduct UI/UX and code quality review (Angular best practices)
 - [ ] Final polish and project handoff
 
 

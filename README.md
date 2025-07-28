@@ -1,13 +1,12 @@
-
 # MedLama - AI-Powered Medical Diagnostics Platform
-
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+  <img src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular">
   <img src="https://img.shields.io/badge/LangGraph-4B8BBE?style=for-the-badge&logo=python&logoColor=white" alt="LangGraph">
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/Google%20Pub%2FSub-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Google Pub/Sub">
   <img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
   <img src="https://img.shields.io/badge/Perplexity-000000?style=for-the-badge&logo=perplexity&logoColor=white" alt="Perplexity">
 </p>
@@ -31,7 +30,7 @@
 MedLama is a cloud-native, microservices-based platform for preliminary medical diagnostics. It combines:
 - A high-performance Go backend for API gateway, message queue, and infrastructure
 - A Python AI/ML microservice using LangGraph, Gemini, and Perplexity APIs for advanced medical reasoning
-- A modern Next.js frontend for seamless user experience
+- A modern Angular frontend for a structured, scalable user experience
 
 This architecture enables independent team development, robust scalability, and clear separation of concerns. The system is designed for reliability, extensibility, and real-world healthcare impact.
 
@@ -39,9 +38,9 @@ This architecture enables independent team development, robust scalability, and 
 
 ```mermaid
 graph TB
-    A[Next.js Frontend]
+    A[Angular Frontend]
     B[API Gateway Go]
-    C[Message Queue Go-Raft]
+    C[Message Queue Google Pub/Sub]
     D[AI Agent Service LangGraph]
     E[MongoDB]
     F[Auth Service Go]
@@ -52,8 +51,8 @@ graph TB
     A --> |REST/WS| B
     B --> |Auth| F
     B --> |DB Ops| E
-    B --> |Queue| C
-    C --> |Task Dispatch| D
+    B --> |Publish Task| C
+    C --> |Consume Task| D
     D --> |LLM Calls| I
     D --> |Research| J
     D --> |Store/Read| E
@@ -88,9 +87,9 @@ The project is organized as three main microservices, each in its own directory 
 ```
 Full_stack_Medical_Diagnostics/
 ├── services/
-│   ├── backend-service/      # Go backend: API gateway, message queue, auth, DB ops
+│   ├── backend-service/      # Go backend: API gateway, Google Pub/Sub messaging, auth, DB ops
 │   ├── ai-service/           # Python AI/ML: LangGraph agents, LLM integration, research
-│   └── frontend/             # Next.js frontend: UI, user flows, API integration
+│   └── frontend/             # Angular frontend: UI, components, services, API integration
 ├── deployment/               # Docker Compose, Kubernetes manifests, CI/CD
 ├── scripts/                  # Utility scripts
 └── README.md
@@ -111,22 +110,23 @@ Full_stack_Medical_Diagnostics/
 - [ ] Emergency detection and escalation
 - [ ] Real-time notifications and alerts
 - [ ] Secure user authentication and data privacy
-- [ ] Modern, responsive frontend (Next.js, TypeScript)
+- [ ] Modern, structured frontend (Angular, TypeScript)
 - [ ] Efficient storage and retrieval of medical conversations
 - [ ] Modular microservices for scalability
 
 ## ☁️ Technology Stack
 | Category      | Technology                                 | Rationale                                                                 |
 |--------------|--------------------------------------------|--------------------------------------------------------------------------|
-| Backend Infrastructure | Go, gRPC, Raft Consensus, Docker        | High-performance API gateway, message queue, and infrastructure         |
+| Backend Infrastructure | Go, gRPC, Docker                        | High-performance API gateway and microservice chassis                   |
+| Messaging             | Google Pub/Sub                           | Reliable, scalable, and managed message queue for service decoupling    |
 | AI/ML Service         | Python, FastAPI/Flask, LangGraph, LangChain | Advanced medical reasoning, stateful workflows, LLM integration         |
 | LLM APIs              | Gemini API, Perplexity API                | Real-time medical research and diagnostic reasoning                      |
-| Frontend              | Next.js, React, TypeScript                | Modern, type-safe, performant UI                                        |
+| Frontend              | Angular, TypeScript, RxJS                 | Structured, scalable, and maintainable UI using Google's flagship framework |
 | Database              | MongoDB                                   | Flexible document store for conversation history                        |
 | Real-time             | WebSockets                                | Live chat and notifications                                             |
 | Container             | Docker                                    | Consistent, portable deployments                                        |
 | Orchestration         | Kubernetes (future phases)                | Scalability and resilience                                              |
-| Testing               | Pytest, Jest, Cypress                     | Comprehensive backend and frontend testing                              |
+| Testing               | Pytest, Jest/Karma, Cypress               | Comprehensive backend and frontend testing                              |
 
 ## 🧠 Engineering Challenges & Solutions
 
@@ -138,16 +138,16 @@ Full_stack_Medical_Diagnostics/
 **Problem:** Identifying urgent medical cases in real time and triggering appropriate alerts.
 **Solution:** Dedicated microservice for emergency detection, with real-time notification integration.
 
-### Challenge 3: Data Privacy & Security
-**Problem:** Ensuring sensitive health data is protected and compliant with regulations.
-**Solution:** Secure authentication, encrypted storage, and strict access controls throughout the stack.
+### Challenge 3: Scalable & Decoupled Microservices
+**Problem:** Ensuring the system can handle load and that services can be developed and deployed independently.
+**Solution:** A Go-based API gateway communicates with the Python AI service asynchronously via a managed message queue (Google Pub/Sub), creating a resilient and scalable architecture.
 
 
 ## 📋 Prerequisites
 
 - Go 1.22+
 - Python 3.10+
-- Node.js 18+
+- Node.js 18+ (with Angular CLI)
 - MongoDB (local or Atlas)
 - `GEMINI_API_KEY` (Google Gemini)
 - `PERPLEXITY_API_KEY` (Perplexity)
@@ -199,9 +199,9 @@ Full_stack_Medical_Diagnostics/
     ```bash
     npm install
     ```
-3. Run the frontend:
+3. Run the frontend development server:
     ```bash
-    npm run dev
+    ng serve
     ```
 
 
@@ -220,7 +220,7 @@ Full_stack_Medical_Diagnostics/
 - **Frontend Tests:**
     ```bash
     cd services/frontend
-    npm test
+    ng test
     ```
 
 ## 🎯 Industry-Aligned Features
@@ -230,7 +230,7 @@ Full_stack_Medical_Diagnostics/
 | Emergency Handling        | Real-time detection & escalation              | Patient safety, critical for healthcare        |
 | Data Privacy & Security   | Encrypted storage, secure auth                | Regulatory compliance, user trust              |
 | Scalable Microservices    | Modular Go/Python backend, containerized deployment | Handles high concurrency, easy to extend   |
-| Modern UX                 | Next.js, responsive design                    | User engagement, accessibility                 |
+| Modern UX                 | Angular, responsive design                    | User engagement, accessibility                 |
 
 
 ### Why MedLama Appeals to Google Health
