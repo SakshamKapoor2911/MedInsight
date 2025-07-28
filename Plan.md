@@ -56,6 +56,61 @@ This document outlines a 15-day, phase-based plan to build the MedLama platform�
 - [ ] Conduct UI/UX and code quality review (Angular best practices)
 - [ ] Final polish and project handoff
 
+---
+
+## 🚀 Immediate Implementation Action Items
+*Priority order for transitioning from current monolithic structure to planned microservices architecture*
+
+### Action Item 1: Create the Proper Folder Structure ⚡ **[START HERE]**
+**Current State**: Monolithic Flask app with mixed concerns (app.py, llm.py, multiturn.py in root)
+**Target State**: Clean microservices separation as documented in README
+**Details**:
+- Create `services/` directory with subdirectories for `backend-service/`, `ai-service/`, `frontend/`
+- Create `deployment/` directory for Docker Compose, K8s manifests, NIM configs
+- Create `scripts/` directory for utility scripts
+- Preserve existing files temporarily while setting up new structure
+
+### Action Item 2: Refactor Existing LLM Code into New AI/ML Service Structure
+**Current State**: LangGraph implementation in `llm.py` and `multiturn.py` at project root
+**Target State**: Organized Python AI/ML service in `services/ai-service/`
+**Details**:
+- Move and restructure LangGraph agents, conversation state management
+- Organize as proper Python package: `/api` (FastAPI/Flask endpoints), `/agents` (LangGraph), `/models` (NIM integration), `/utils`
+- Update imports and dependencies for new structure
+- Integrate Gemma 2 via NVIDIA NIM for medical reasoning, keep Perplexity for research
+- Update requirements.txt for the AI service
+
+### Action Item 3: Set up Basic Go API Gateway
+**Current State**: No Go backend exists
+**Target State**: High-performance Go API gateway in `services/backend-service/`
+**Details**:
+- Create Go module structure with `/cmd` (main.go), `/internal` (api, pubsub, auth, db), `/pkg`
+- Use lightweight framework (Gin or Echo) for REST/WebSocket handling
+- Implement Google Pub/Sub messaging integration for AI service communication
+- Add authentication and MongoDB database operations
+- Create basic health check and API endpoints
+
+### Action Item 4: Set up Basic Angular Frontend
+**Current State**: Next.js/React components in `medLama/` directory
+**Target State**: Modern Angular application in `services/frontend/`
+**Details**:
+- Initialize new Angular project using Angular CLI
+- Migrate UI concepts from existing React components to Angular components
+- Set up project structure: `/src/app/components`, `/services`, `/models`
+- Implement authentication screens and chat UI with Angular best practices
+- Connect to Go backend API via HTTP services and WebSocket integration
+
+### Action Item 5: Create Docker and Kubernetes Configurations
+**Current State**: No containerization or orchestration configs
+**Target State**: Complete containerization and GKE deployment setup
+**Details**:
+- Create Dockerfiles for each service (Go backend, Python AI/ML, Angular frontend)
+- Set up Docker Compose for local development environment
+- Create Kubernetes manifests for GKE deployment in `deployment/` directory
+- Configure NVIDIA NIM deployment with Gemma 2 model on GPU node pool
+- Set up Cloud Build CI/CD pipeline configuration
+
+---
 
 ## Development Approach
 - Daily check-ins and progress tracking
