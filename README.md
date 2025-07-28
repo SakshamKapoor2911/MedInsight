@@ -44,7 +44,6 @@ graph TB
     D[AI Agent Service LangGraph]
     E[MongoDB]
     F[Auth Service Go]
-    H[Emergency Detection]
     I[Gemini API]
     J[Perplexity API]
 
@@ -56,8 +55,6 @@ graph TB
     D --> |LLM Calls| I
     D --> |Research| J
     D --> |Store/Read| E
-    D --> |Emergency| H
-    H --> |Alert| B
 
     subgraph Frontend
         A
@@ -70,7 +67,6 @@ graph TB
     end
     subgraph Python_AI_ML_Microservice
         D
-        H
     end
     subgraph External_APIs
         I
@@ -107,7 +103,6 @@ Full_stack_Medical_Diagnostics/
 ## 📦 Key Features
 - [ ] AI-powered symptom triage and diagnostic reasoning
 - [ ] Multi-turn, context-aware conversation state
-- [ ] Emergency detection and escalation
 - [ ] Real-time notifications and alerts
 - [ ] Secure user authentication and data privacy
 - [ ] Modern, structured frontend (Angular, TypeScript)
@@ -134,11 +129,7 @@ Full_stack_Medical_Diagnostics/
 **Problem:** Maintaining context and accuracy across complex, multi-step medical dialogues.
 **Solution:** Use LangGraph to manage robust conversational state and enable tool-using agent workflows.
 
-### Challenge 2: Emergency Detection & Escalation
-**Problem:** Identifying urgent medical cases in real time and triggering appropriate alerts.
-**Solution:** Dedicated microservice for emergency detection, with real-time notification integration.
-
-### Challenge 3: Scalable & Decoupled Microservices
+### Challenge 2: Scalable & Decoupled Microservices
 **Problem:** Ensuring the system can handle load and that services can be developed and deployed independently.
 **Solution:** A Go-based API gateway communicates with the Python AI service asynchronously via a managed message queue (Google Pub/Sub), creating a resilient and scalable architecture.
 
@@ -227,7 +218,6 @@ Full_stack_Medical_Diagnostics/
 | Focus Area                | Implementation Example                        | Why It Matters                                 |
 |---------------------------|-----------------------------------------------|------------------------------------------------|
 | Conversational AI         | Multi-turn, context-aware agent               | Simulates real consultations                   |
-| Emergency Handling        | Real-time detection & escalation              | Patient safety, critical for healthcare        |
 | Data Privacy & Security   | Encrypted storage, secure auth                | Regulatory compliance, user trust              |
 | Scalable Microservices    | Modular Go/Python backend, containerized deployment | Handles high concurrency, easy to extend   |
 | Modern UX                 | Angular, responsive design                    | User engagement, accessibility                 |

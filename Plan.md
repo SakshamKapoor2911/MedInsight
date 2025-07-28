@@ -1,4 +1,3 @@
-
 # MedLama Implementation Plan
 
 This document outlines a 15-day, phase-based plan to build the MedLama platformâ€”a cloud-native, microservices-based system for AI-powered medical diagnostics. The plan is inspired by enterprise engineering practices and rapid AI-driven development, and is structured to reflect the modular architecture described in the README.
@@ -6,7 +5,7 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 ## Phase 1: Project Scaffolding & Infrastructure (Days 1-2)
 - [ ] Initialize repository and folder structure for all microservices:
     - Go backend (`services/backend-service`): API gateway, Google Pub/Sub messaging, auth, DB ops
-    - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration, emergency detection
+    - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration
     - Angular frontend (`services/frontend`): UI, components, services, API integration
 - [ ] Set up Python virtual environment, Go module, and Node.js workspace
 - [ ] Add basic README, .gitignore, and requirements files for each service
@@ -16,7 +15,7 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 
 ## Phase 2: Core Backend & AI/ML Services (Days 3-5)
 - [ ] Implement Go backend skeleton (API gateway, Google Pub/Sub messaging, authentication, DB ops)
-- [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state, emergency detection)
+- [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state)
 - [ ] Add endpoints for user authentication, conversation, and research
 - [ ] Connect both backend and AI/ML service to MongoDB for storing conversation history
 - [ ] Integrate LLM APIs (Gemini, Perplexity) for diagnostic reasoning
@@ -30,12 +29,10 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 - [ ] Style with modern, responsive design
 - [ ] Write frontend unit tests (Karma/Jasmine)
 
-## Phase 4: Real-time Features & Emergency Handling (Days 9-10)
+## Phase 4: Real-time Features (Days 9-10)
 - [ ] Implement WebSocket support for live chat and alerts (Go backend, Angular frontend)
-- [ ] Build and integrate emergency detection microservice (Python AI/ML)
 - [ ] Integrate notification/alert system (backend, AI/ML, frontend)
-- [ ] Add escalation logic for urgent cases
-- [ ] Write integration tests for real-time and emergency flows
+- [ ] Write integration tests for real-time flows
 
 ## Phase 5: Testing & Quality Assurance (Days 11-12)
 - [ ] Achieve >80% unit test coverage (Go backend, Python AI/ML, Angular frontend)
