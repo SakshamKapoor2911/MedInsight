@@ -16,10 +16,10 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 ## Phase 2: Core Backend & AI/ML Services (Days 3-5)
 - [ ] Implement Go backend skeleton (API gateway, Google Pub/Sub messaging, authentication, DB ops)
 - [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state)
-- [ ] Design NVIDIA NIM integration for self-hosted model inference
+- [ ] Design NVIDIA NIM integration with Gemma 2 for self-hosted medical reasoning
 - [ ] Add endpoints for user authentication, conversation, and research
 - [ ] Connect both backend and AI/ML service to MongoDB for storing conversation history
-- [ ] Integrate LLM APIs (Gemini, Perplexity) for diagnostic reasoning
+- [ ] Integrate Perplexity API for medical literature research and evidence gathering
 - [ ] Write unit tests for backend and AI/ML logic
 
 ## Phase 3: Frontend Development (Days 6-8)

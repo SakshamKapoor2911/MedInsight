@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
   <img src="https://img.shields.io/badge/Google%20Pub%2FSub-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Google Pub/Sub">
   <img src="https://img.shields.io/badge/NVIDIA%20NIM-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="NVIDIA NIM">
-  <img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+  <img src="https://img.shields.io/badge/Gemma%202-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemma 2">
   <img src="https://img.shields.io/badge/Perplexity-000000?style=for-the-badge&logo=perplexity&logoColor=white" alt="Perplexity">
 </p>
 
@@ -30,11 +30,12 @@
 
 MedLama is a cloud-native, microservices-based platform for preliminary medical diagnostics. It combines:
 - A high-performance Go backend for API gateway, message queue, and infrastructure
-- A Python AI/ML microservice using LangGraph, Gemini, and Perplexity APIs for advanced medical reasoning
+- A Python AI/ML microservice using LangGraph for advanced medical reasoning with self-hosted LLM inference
 - A modern Angular frontend for a structured, scalable user experience
-- **Self-hosted AI inference on GKE using NVIDIA NIM for privacy and performance**
+- **Self-hosted AI inference on GKE using NVIDIA NIM with Gemma 2 for privacy, performance, and cost control**
+- External research capabilities via Perplexity API for accessing current medical literature
 
-This architecture enables independent team development, robust scalability, and clear separation of concerns. The system is designed for reliability, extensibility, and real-world healthcare impact.
+This architecture enables independent team development, robust scalability, and clear separation of concerns. The system is designed for reliability, extensibility, and real-world healthcare impact while keeping sensitive medical data within our own cloud environment.
 
 ## 🏗️ System Architecture
 
@@ -47,8 +48,7 @@ graph TB
     D[AI Agent Service LangGraph]
     E[MongoDB]
     F[Auth Service Go]
-    N[NVIDIA NIM on GKE]
-    I[Gemini API]
+    N[NVIDIA NIM on GKE<br/>Gemma 2 Model]
     J[Perplexity API]
     
     %% CI/CD & Monitoring components
@@ -62,9 +62,8 @@ graph TB
     B --> |DB Ops| E
     B --> |Publish Task| C
     C --> |Consume Task| D
-    D --> |Core Inference| N
-    D --> |LLM Calls| I
-    D --> |Research| J
+    D --> |Medical Reasoning| N
+    D --> |Medical Research| J
     D --> |Store/Read| E
     
     %% Deployment & Monitoring flow
@@ -96,7 +95,6 @@ graph TB
     end
     
     subgraph External_APIs
-        I
         J
     end
 ```
@@ -143,8 +141,8 @@ Full_stack_Medical_Diagnostics/
 | Backend Infrastructure | Go, gRPC, Docker                        | High-performance API gateway and microservice chassis                   |
 | Messaging             | Google Pub/Sub                           | Reliable, scalable, and managed message queue for service decoupling    |
 | AI/ML Service         | Python, FastAPI/Flask, LangGraph, LangChain | Advanced medical reasoning, stateful workflows, LLM integration         |
-| AI Inference          | NVIDIA NIM, GKE, NVIDIA GPUs, TensorRT    | Low-latency, high-throughput, self-hosted model serving for data privacy |
-| LLM APIs              | Gemini API, Perplexity API                | Real-time medical research and diagnostic reasoning                      |
+| AI Inference          | NVIDIA NIM, Gemma 2, GKE, NVIDIA GPUs, TensorRT | Low-latency, high-throughput, self-hosted Google LLM serving for data privacy |
+| External Research     | Perplexity API                           | Real-time medical literature research and evidence gathering             |
 | Frontend              | Angular, TypeScript, RxJS                 | Structured, scalable, and maintainable UI using Google's flagship framework |
 | Database              | MongoDB                                   | Flexible document store for conversation history                        |
 | Real-time             | WebSockets                                | Live chat and notifications                                             |
@@ -179,8 +177,8 @@ Full_stack_Medical_Diagnostics/
 - Node.js 18+ (with Angular CLI)
 - MongoDB (local or Atlas)
 - Google Cloud account with GKE, Cloud Build, and Cloud Operations enabled
-- `GEMINI_API_KEY` (Google Gemini)
-- `PERPLEXITY_API_KEY` (Perplexity)
+- NVIDIA GPU quota in GCP for NIM deployment
+- `PERPLEXITY_API_KEY` (for medical literature research)
 
 ## 🛠️ Getting Started
 
