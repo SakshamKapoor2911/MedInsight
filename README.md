@@ -40,6 +40,7 @@ This architecture enables independent team development, robust scalability, and 
 
 ```mermaid
 graph TB
+    %% Main components
     A[Angular Frontend]
     B[API Gateway Go]
     C[Message Queue Google Pub/Sub]
@@ -49,7 +50,13 @@ graph TB
     N[NVIDIA NIM on GKE]
     I[Gemini API]
     J[Perplexity API]
-
+    
+    %% CI/CD & Monitoring components
+    CB[Cloud Build]
+    CO[Cloud Operations]
+    GH[GitHub Repo]
+    
+    %% Flow connections
     A --> |REST/WS| B
     B --> |Auth| F
     B --> |DB Ops| E
@@ -59,22 +66,35 @@ graph TB
     D --> |LLM Calls| I
     D --> |Research| J
     D --> |Store/Read| E
-
-    subgraph Frontend
-        A
+    
+    %% Deployment & Monitoring flow
+    GH --> |Trigger CI| CB
+    CB --> |Deploy| GCP
+    CO --> |Monitor| GCP
+    
+    %% Container organization
+    subgraph GCP[Google Cloud Platform]
+        subgraph GKE[Google Kubernetes Engine]
+            subgraph Frontend_Pod
+                A
+            end
+            subgraph Go_Backend_Pod
+                B
+                F
+            end
+            subgraph Python_AI_ML_Pod
+                D
+            end
+            subgraph NVIDIA_Inference_Pod
+                N
+            end
+            C
+            E
+            CB
+            CO
+        end
     end
-    subgraph Go_Backend_Microservice
-        B
-        C
-        F
-        E
-    end
-    subgraph Python_AI_ML_Microservice
-        D
-    end
-    subgraph Self_Hosted_Inference
-        N
-    end
+    
     subgraph External_APIs
         I
         J

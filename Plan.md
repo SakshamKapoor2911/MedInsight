@@ -5,17 +5,18 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 ## Phase 1: Project Scaffolding & Infrastructure (Days 1-2)
 - [ ] Initialize repository and folder structure for all microservices:
     - Go backend (`services/backend-service`): API gateway, Google Pub/Sub messaging, auth, DB ops
-    - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration
+    - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration, NIM orchestration
     - Angular frontend (`services/frontend`): UI, components, services, API integration
 - [ ] Set up Python virtual environment, Go module, and Node.js workspace
 - [ ] Add basic README, .gitignore, and requirements files for each service
 - [ ] Create Docker configuration for local development (all services)
 - [ ] Set up MongoDB (local or Atlas)
-- [ ] Scaffold deployment directory for Docker Compose, Kubernetes manifests, and CI/CD
+- [ ] Scaffold deployment directory for Docker Compose, Kubernetes manifests, NIM configuration, and CI/CD
 
 ## Phase 2: Core Backend & AI/ML Services (Days 3-5)
 - [ ] Implement Go backend skeleton (API gateway, Google Pub/Sub messaging, authentication, DB ops)
 - [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state)
+- [ ] Design NVIDIA NIM integration for self-hosted model inference
 - [ ] Add endpoints for user authentication, conversation, and research
 - [ ] Connect both backend and AI/ML service to MongoDB for storing conversation history
 - [ ] Integrate LLM APIs (Gemini, Perplexity) for diagnostic reasoning
@@ -42,10 +43,11 @@ This document outlines a 15-day, phase-based plan to build the MedLama platformâ
 
 ## Phase 6: Cloud/Deployment & Monitoring (Days 13-14)
 - [ ] Containerize all microservices (Go backend, Python AI/ML, Angular frontend) with Docker
-- [ ] Prepare Kubernetes manifests for deployment (all services)
-- [ ] Set up CI/CD pipeline for automated builds and tests
-- [ ] Deploy to cloud (preferably GCP for Google Pub/Sub and Angular alignment)
-- [ ] Add monitoring and alerting (basic dashboards, health checks)
+- [ ] Set up Google Kubernetes Engine (GKE) cluster with GPU node pool for NVIDIA NIM
+- [ ] Deploy NVIDIA NIM on GKE for self-hosted model inference
+- [ ] Prepare Kubernetes manifests for all services deployment
+- [ ] Set up Cloud Build for CI/CD pipeline and automated deployments
+- [ ] Configure Google Cloud Operations for monitoring, logging, and alerting
 
 ## Phase 7: Documentation & Final Review (Day 15)
 - [ ] Update README and API documentation (Swagger/OpenAPI)
