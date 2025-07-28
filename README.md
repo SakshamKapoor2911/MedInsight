@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/badge/LangGraph-4B8BBE?style=for-the-badge&logo=python&logoColor=white" alt="LangGraph">
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
   <img src="https://img.shields.io/badge/Google%20Pub%2FSub-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Google Pub/Sub">
+  <img src="https://img.shields.io/badge/NVIDIA%20NIM-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="NVIDIA NIM">
   <img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
   <img src="https://img.shields.io/badge/Perplexity-000000?style=for-the-badge&logo=perplexity&logoColor=white" alt="Perplexity">
 </p>
@@ -31,6 +32,7 @@ MedLama is a cloud-native, microservices-based platform for preliminary medical 
 - A high-performance Go backend for API gateway, message queue, and infrastructure
 - A Python AI/ML microservice using LangGraph, Gemini, and Perplexity APIs for advanced medical reasoning
 - A modern Angular frontend for a structured, scalable user experience
+- **Self-hosted AI inference on GKE using NVIDIA NIM for privacy and performance**
 
 This architecture enables independent team development, robust scalability, and clear separation of concerns. The system is designed for reliability, extensibility, and real-world healthcare impact.
 
@@ -44,6 +46,7 @@ graph TB
     D[AI Agent Service LangGraph]
     E[MongoDB]
     F[Auth Service Go]
+    N[NVIDIA NIM on GKE]
     I[Gemini API]
     J[Perplexity API]
 
@@ -52,6 +55,7 @@ graph TB
     B --> |DB Ops| E
     B --> |Publish Task| C
     C --> |Consume Task| D
+    D --> |Core Inference| N
     D --> |LLM Calls| I
     D --> |Research| J
     D --> |Store/Read| E
@@ -67,6 +71,9 @@ graph TB
     end
     subgraph Python_AI_ML_Microservice
         D
+    end
+    subgraph Self_Hosted_Inference
+        N
     end
     subgraph External_APIs
         I
@@ -86,7 +93,7 @@ Full_stack_Medical_Diagnostics/
 │   ├── backend-service/      # Go backend: API gateway, Google Pub/Sub messaging, auth, DB ops
 │   ├── ai-service/           # Python AI/ML: LangGraph agents, LLM integration, research
 │   └── frontend/             # Angular frontend: UI, components, services, API integration
-├── deployment/               # Docker Compose, Kubernetes manifests, CI/CD
+├── deployment/               # Docker Compose, Kubernetes manifests, CI/CD (GKE manifests, NIM deployment)
 ├── scripts/                  # Utility scripts
 └── README.md
 ```
@@ -96,7 +103,7 @@ Full_stack_Medical_Diagnostics/
 - Makes it easy to isolate, debug, and deploy each service separately
 - Supports scalable, modular development and clear code ownership
 - Simplifies onboarding for new contributors by clarifying service boundaries
-- Facilitates containerization and cloud-native deployment
+- Facilitates containerization and cloud-native deployment on GKE
 
 ---
 
@@ -108,6 +115,7 @@ Full_stack_Medical_Diagnostics/
 - [ ] Modern, structured frontend (Angular, TypeScript)
 - [ ] Efficient storage and retrieval of medical conversations
 - [ ] Modular microservices for scalability
+- [ ] **Self-hosted, GPU-accelerated AI inference via NVIDIA NIM on GKE**
 
 ## ☁️ Technology Stack
 | Category      | Technology                                 | Rationale                                                                 |
@@ -115,12 +123,15 @@ Full_stack_Medical_Diagnostics/
 | Backend Infrastructure | Go, gRPC, Docker                        | High-performance API gateway and microservice chassis                   |
 | Messaging             | Google Pub/Sub                           | Reliable, scalable, and managed message queue for service decoupling    |
 | AI/ML Service         | Python, FastAPI/Flask, LangGraph, LangChain | Advanced medical reasoning, stateful workflows, LLM integration         |
+| AI Inference          | NVIDIA NIM, GKE, NVIDIA GPUs, TensorRT    | Low-latency, high-throughput, self-hosted model serving for data privacy |
 | LLM APIs              | Gemini API, Perplexity API                | Real-time medical research and diagnostic reasoning                      |
 | Frontend              | Angular, TypeScript, RxJS                 | Structured, scalable, and maintainable UI using Google's flagship framework |
 | Database              | MongoDB                                   | Flexible document store for conversation history                        |
 | Real-time             | WebSockets                                | Live chat and notifications                                             |
 | Container             | Docker                                    | Consistent, portable deployments                                        |
-| Orchestration         | Kubernetes (future phases)                | Scalability and resilience                                              |
+| Orchestration         | Google Kubernetes Engine (GKE)            | Scalability, resilience, and management of GPU-powered microservices    |
+| CI/CD                 | Cloud Build, GitHub Actions               | Automated builds, tests, and deployments                                |
+| Monitoring            | Google Cloud Operations, Prometheus, Grafana | Health checks, dashboards, and alerting                                 |
 | Testing               | Pytest, Jest/Karma, Cypress               | Comprehensive backend and frontend testing                              |
 
 ## 🧠 Engineering Challenges & Solutions
@@ -133,6 +144,13 @@ Full_stack_Medical_Diagnostics/
 **Problem:** Ensuring the system can handle load and that services can be developed and deployed independently.
 **Solution:** A Go-based API gateway communicates with the Python AI service asynchronously via a managed message queue (Google Pub/Sub), creating a resilient and scalable architecture.
 
+### Challenge 3: High-Performance, Private AI Inference
+**Problem:** Achieving low-latency responses for a real-time diagnostic tool while ensuring patient data remains private.
+**Solution:** Deploy a pre-trained model as an NVIDIA NIM on a GPU-enabled GKE cluster. This leverages an optimized inference stack for performance and keeps all sensitive data within our own cloud environment.
+
+### Challenge 4: Cloud-Native CI/CD and Monitoring
+**Problem:** Ensuring reliable deployments and system health in production.
+**Solution:** Use Google Cloud Build for CI/CD and Google Cloud Operations for monitoring, alerting, and dashboards.
 
 ## 📋 Prerequisites
 
@@ -140,6 +158,7 @@ Full_stack_Medical_Diagnostics/
 - Python 3.10+
 - Node.js 18+ (with Angular CLI)
 - MongoDB (local or Atlas)
+- Google Cloud account with GKE, Cloud Build, and Cloud Operations enabled
 - `GEMINI_API_KEY` (Google Gemini)
 - `PERPLEXITY_API_KEY` (Perplexity)
 
