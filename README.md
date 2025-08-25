@@ -43,7 +43,7 @@ This architecture enables independent team development, robust scalability, and 
 ```mermaid
 graph TB
     %% Main components
-    A[Next.js (React) Frontend]
+    A[Next.js React Frontend]
     B[API Gateway Go]
     C[Message Queue Google Pub/Sub]
     D[AI Agent Service LangGraph]
