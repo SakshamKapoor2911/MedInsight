@@ -5,8 +5,8 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional
 
-from ...utils.conversation_state import ConversationStateManager
-from ...agents.medical_agent import MedicalAgent
+from utils.conversation_state import ConversationStateManager
+from agents.medical_agent import MedicalAgent
 
 # Router
 router = APIRouter(prefix="/api/chat", tags=["chat"])

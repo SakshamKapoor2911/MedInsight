@@ -15,6 +15,7 @@ const Progress = React.forwardRef<
       'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
       className
     )}
+    aria-valuenow={typeof value === 'number' ? value : undefined}
     {...props}
   >
     <ProgressPrimitive.Indicator

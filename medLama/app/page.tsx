@@ -1,7 +1,11 @@
-// Ensure this directive is necessary for client-side rendering
+// Main MedLama app page - handles chat, analysis, history, and UI state
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import Link from "next/link";
+import ChatBox from "@/components/ChatBox";
+import RealtimeChat from "@/components/RealtimeChat";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,8 +16,10 @@ import { useTheme } from "next-themes";
 import type { Doctor, SymptomAnalysis, Message, Conversation, EmergencyFacility } from "@/lib/types";
 import { findAvailableDoctors, findNearbyHospitals } from "@/lib/analysis";
 
+// UI stage types for main app view
 type Stage = "chat" | "analysis" | "doctors" | "history";
 
+// MedLama logo component
 const LamaLogo = () => (
   <div className="relative group">
     <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-green-500/20 rounded-full blur ai-thinking"></div>
@@ -26,7 +32,7 @@ const LamaLogo = () => (
   </div>
 );
 
-// Sample conversation starters to make the chat more interactive
+// Sample conversation starters for user convenience
 const conversationStarters = [
   "I've been having chest pain for the last few days.",
   "My throat feels sore and I have a slight fever.",
@@ -35,7 +41,13 @@ const conversationStarters = [
   "I'm feeling unusually tired all the time."
 ];
 
+// Main app component
 export default function Home() {
+  // Auth state (local only)
+  const { token, logout } = useAuth();
+  if (!token) return null;
+
+  // Conversation and UI state
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
@@ -56,12 +68,13 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Dim UI when processing
   useEffect(() => {
     setIsDimmed(isProcessing);
   }, [isProcessing]);
 
+  // Scroll to bottom when messages change
   useEffect(() => {
-    // Scroll to bottom when messages change
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -389,6 +402,7 @@ export default function Home() {
                 Back to Chat
               </Button> */}
               <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
+                <button onClick={logout} className="text-red-500 underline mb-4 block self-end">Logout</button>
                 Symptom Analysis
               </h2>
             </div>
@@ -473,7 +487,10 @@ export default function Home() {
       <Header />
       <main className="flex flex-1 flex-col items-center p-4 md:p-8">
         <Card className={`flex h-[80vh] w-full max-w-4xl flex-col shadow-lg glass-card transition-opacity duration-300 ${isDimmed ? 'opacity-95' : ''}`}>
+          <Link href="/login" className="text-blue-500 underline mb-4 block self-end">Login</Link>
           <ScrollArea className="flex-1 p-4 chat-container">
+            <ChatBox />
+            <RealtimeChat />
             <div className="space-y-4">
               {messages.map((message, i) => (
                 <div

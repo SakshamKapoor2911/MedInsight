@@ -25,11 +25,6 @@ backend-service/
 ```
 
 ## Technology Stack
-- **Framework**: Gin or Echo (lightweight HTTP framework)
-- **Messaging**: Google Cloud Pub/Sub
-- **Database**: MongoDB with official Go driver
-- **Authentication**: JWT tokens
-- **WebSockets**: Gorilla WebSocket or similar
 
 ## Next Steps
 1. Initialize Go module (`go mod init`)
@@ -37,3 +32,33 @@ backend-service/
 3. Implement Pub/Sub publisher for AI service communication
 4. Add MongoDB connection and basic CRUD operations
 5. Implement authentication middleware
+## Technology Stack
+ - **Framework**: Gin or Echo (lightweight HTTP framework)
+ - **Database**: MongoDB with official Go driver
+ - **Authentication**: JWT tokens
+ - **WebSockets**: Gorilla WebSocket or similar
+
+## Local Development & Testing
+
+This service is designed for local use only. All cloud/deployment plans are deferred.
+
+### Setup
+1. Initialize Go module (if not already):
+	```bash
+	go mod tidy
+	```
+2. Start MongoDB locally (or use Docker Compose).
+3. Run the backend server:
+	```bash
+	go run ./cmd/main.go
+	```
+
+### Running Tests
+Run all unit and integration tests locally:
+```bash
+go test ./...
+```
+
+### Notes
+- All authentication, messaging, and DB logic is implemented for local development and testing only.
+- See code comments for details on each module and handler.

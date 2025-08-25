@@ -3,7 +3,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular">
+    <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+    <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React">
   <img src="https://img.shields.io/badge/LangGraph-4B8BBE?style=for-the-badge&logo=python&logoColor=white" alt="LangGraph">
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
   <img src="https://img.shields.io/badge/Google%20Pub%2FSub-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Google Pub/Sub">
@@ -31,7 +32,7 @@
 MedLama is a cloud-native, microservices-based platform for preliminary medical diagnostics. It combines:
 - A high-performance Go backend for API gateway, message queue, and infrastructure
 - A Python AI/ML microservice using LangGraph for advanced medical reasoning with self-hosted LLM inference
-- A modern Angular frontend for a structured, scalable user experience
+- A modern Next.js (React) frontend for a structured, scalable user experience
 - **Self-hosted AI inference on GKE using NVIDIA NIM with Gemma 2 for privacy, performance, and cost control**
 - External research capabilities via Perplexity API for accessing current medical literature
 
@@ -42,7 +43,7 @@ This architecture enables independent team development, robust scalability, and 
 ```mermaid
 graph TB
     %% Main components
-    A[Angular Frontend]
+    A[Next.js (React) Frontend]
     B[API Gateway Go]
     C[Message Queue Google Pub/Sub]
     D[AI Agent Service LangGraph]
@@ -110,7 +111,7 @@ Full_stack_Medical_Diagnostics/
 ├── services/
 │   ├── backend-service/      # Go backend: API gateway, Google Pub/Sub messaging, auth, DB ops
 │   ├── ai-service/           # Python AI/ML: LangGraph agents, LLM integration, research
-│   └── frontend/             # Angular frontend: UI, components, services, API integration
+│   └── medLama/              # Next.js frontend: UI, components, services, API integration
 ├── deployment/               # Docker Compose, Kubernetes manifests, CI/CD (GKE manifests, NIM deployment)
 ├── scripts/                  # Utility scripts
 └── README.md
@@ -130,7 +131,7 @@ Full_stack_Medical_Diagnostics/
 - [ ] Multi-turn, context-aware conversation state
 - [ ] Real-time notifications and alerts
 - [ ] Secure user authentication and data privacy
-- [ ] Modern, structured frontend (Angular, TypeScript)
+- [ ] Modern, structured frontend (Next.js, React, TypeScript)
 - [ ] Efficient storage and retrieval of medical conversations
 - [ ] Modular microservices for scalability
 - [ ] **Self-hosted, GPU-accelerated AI inference via NVIDIA NIM on GKE**
@@ -143,7 +144,7 @@ Full_stack_Medical_Diagnostics/
 | AI/ML Service         | Python, FastAPI/Flask, LangGraph, LangChain | Advanced medical reasoning, stateful workflows, LLM integration         |
 | AI Inference          | NVIDIA NIM, Gemma 2, GKE, NVIDIA GPUs, TensorRT | Low-latency, high-throughput, self-hosted Google LLM serving for data privacy |
 | External Research     | Perplexity API                           | Real-time medical literature research and evidence gathering             |
-| Frontend              | Angular, TypeScript, RxJS                 | Structured, scalable, and maintainable UI using Google's flagship framework |
+| Frontend              | Next.js, React, TypeScript, Tailwind CSS  | Modern, scalable, and maintainable UI with SSR and fast dev experience      |
 | Database              | MongoDB                                   | Flexible document store for conversation history                        |
 | Real-time             | WebSockets                                | Live chat and notifications                                             |
 | Container             | Docker                                    | Consistent, portable deployments                                        |
@@ -251,13 +252,56 @@ Full_stack_Medical_Diagnostics/
     ng test
     ```
 
-## 🧪 Test-Driven Development Approach
 
 MedLama is built with strict test-driven development (TDD) principles:
+
 - **Unit, integration, and end-to-end tests are required at every major phase.**
 - **Test gates:** No phase is considered complete until all new features pass their respective tests.
 - **Performance and accuracy:** AI/ML components are validated with benchmarks and truthfulness checks to ensure reliable medical reasoning.
 - **Continuous integration:** Automated test runners (Go, Pytest, Karma/Jest, Cypress) are used before every major commit and deployment.
+
+### Recommended Test Plan
+
+#### System-Wide (End-to-End)
+- User can register, login, and access protected chat
+- Real-time chat works between multiple users
+- AI/ML service returns plausible medical answers for sample prompts
+- Conversation history is stored and retrievable from MongoDB
+- Authenticated API calls are enforced (JWT required)
+- Error handling for invalid tokens, missing data, and service downtime
+
+#### Go Backend Service
+- Unit: API endpoints, auth logic, DB ops, Pub/Sub
+- Integration: register → login → chat → store/retrieve conversation, WebSocket
+
+#### Python AI/ML Service
+- Unit: agent logic, API endpoints, model inference, session/state
+- Integration: backend-to-AI/ML message flow, DB ops
+- Performance/accuracy: benchmark response time, validate medical plausibility
+
+#### Frontend (Next.js/Angular)
+- Unit: components, services, state management
+- Integration: API calls, route protection, real-time updates
+- E2E: full user journey (register → login → chat → view history)
+
+#### Database (MongoDB)
+- CRUD operations, data integrity, indexes
+
+#### Authentication & Security
+- Registration/login, JWT, protected routes, token storage, error handling
+
+#### Real-Time Features
+- WebSocket connection, auth enforcement, notification delivery
+
+#### Test Gates
+- All new features must pass unit, integration, and E2E tests before marking as complete
+- No mocks/fakes for business logic—always use real handlers and endpoints
+
+**How to Run All Tests Locally:**
+- Backend: `go test ./...`
+- AI/ML: `pytest`
+- Frontend: `npm test` or `ng test`
+- E2E: `cypress run` (after starting all services with Docker Compose)
 
 This approach ensures that every part of the system is robust, scalable, and ready for real-world healthcare use.
 
@@ -268,7 +312,7 @@ This approach ensures that every part of the system is robust, scalable, and rea
 | Data Privacy & Security      | Self-hosted AI, encrypted storage, secure auth  | Regulatory compliance, patient trust            |
 | AI-Driven Diagnostics        | LangGraph agents, Gemma 2, NVIDIA NIM           | Advanced, context-aware medical reasoning       |
 | Real-Time Collaboration      | WebSockets, live chat, notifications            | Enables responsive, interactive consultations   |
-| Modern UX & Accessibility    | Angular, responsive design                      | Improves patient engagement and accessibility   |
+| Modern UX & Accessibility    | Next.js/React, responsive design                | Improves patient engagement and accessibility   |
 | Evidence-Based Medicine      | Perplexity API for literature research          | Supports clinical accuracy and transparency     |
 | DevOps & Monitoring          | Cloud Build, Cloud Operations, CI/CD            | Reliable deployments and system health          |
 

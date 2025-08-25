@@ -10,6 +10,14 @@ export async function findAvailableDoctors(specialty: string, latitude: number =
   return [];
 }
 
+export function analyzeData(input: any): any {
+  if (!input || typeof input.value !== 'number') {
+    throw new Error('Invalid input');
+  }
+  // Example analysis logic
+  return { result: input.value * 2 };
+}
+
 export async function findNearbyHospitals(latitude: number = 38.02931000, longitude: number = -78.47668000): Promise<EmergencyFacility[]> {
   try {
     const res = await fetch(`/api/health-centers/?latitude=${latitude}&longitude=${longitude}`);

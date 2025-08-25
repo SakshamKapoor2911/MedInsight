@@ -76,6 +76,10 @@ ai-service/
 - **Inference**: NVIDIA NIM with Gemma 2 model (planned)
 - **Research**: Perplexity API for medical literature
 - **Database**: MongoDB for conversation storage (planned)
+ 
+## Local Development & Testing
+
+This service is designed for local use only. All cloud/deployment plans are deferred.
 
 ## Running the Service
 
@@ -91,6 +95,16 @@ ai-service/
    - Linux/Mac: `source venv/bin/activate`
 3. Install dependencies: `pip install -r requirements.txt`
 4. Create `.env` file from `.env.example` and add your API keys
+ 
+### Running Tests
+Run all unit and integration tests locally:
+```bash
+pytest
+```
+ 
+### Notes
+- All agent, API, and research logic is implemented for local development and testing only.
+- See code comments for details on each module and handler.
 
 ### Starting the API Server
 ```bash

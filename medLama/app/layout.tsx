@@ -1,31 +1,25 @@
+// Root layout for MedLama frontend (Next.js)
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from "@/components/theme-provider";
+import ThemeProviderClient from './theme-provider-client';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// Metadata for SEO and browser
 export const metadata: Metadata = {
   title: 'MedLama - AI Health Assistant',
   description: 'AI-powered health triage and symptom analysis',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// Main layout component
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body suppressHydrationWarning={true} className={inter.className}>
+        <ThemeProviderClient>
           {children}
-        </ThemeProvider>
+        </ThemeProviderClient>
       </body>
     </html>
   );

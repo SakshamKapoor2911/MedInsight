@@ -1,5 +1,5 @@
 """
-Main medical diagnostic agent using LangGraph
+Main medical diagnostic agent using LangGraph (local only)
 """
 import os
 import time
@@ -8,22 +8,22 @@ import re
 from typing import Dict, Any, List, Optional, TypedDict, Annotated
 from functools import wraps
 
+# LangGraph and LLM imports
 from langgraph.graph import StateGraph, START, END
 from langgraph.errors import GraphRecursionError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
 
 # Import utility functions
-from ..utils.text_processing import (
+from utils.text_processing import (
     format_conversation_history,
     extract_user_messages,
     beautify_text
 )
-from ..utils.conversation_state import ConversationSession, parse_structured_response
+from utils.conversation_state import ConversationSession, parse_structured_response
 
 # Import model clients
-from ..models.perplexity_client import perplexity_research
-
+from models.perplexity_client import perplexity_research
 
 # State Management for the Agent
 class State(TypedDict):
@@ -36,7 +36,6 @@ class State(TypedDict):
     symptom_details: Annotated[Dict[str, Any], "Collected symptom information"]
     question_count: Annotated[int, "Number of questions asked so far"]
 
-
 # Rate Limiting Decorator
 def api_rate_limit(seconds: int = 1):
     """Decorator to add sleep time between API calls"""
@@ -48,8 +47,7 @@ def api_rate_limit(seconds: int = 1):
         return wrapper
     return decorator
 
-
-# System Prompt
+# System Prompt for medical reasoning
 SYSTEM_PROMPT = """
 You are an advanced AI medical assistant with access to up-to-date medical literature, expert guidelines, and peer-reviewed studies. Your role is to:
 1. Conduct a structured diagnostic evaluation, mimicking a board-certified physician's approach.
@@ -61,23 +59,19 @@ You are an advanced AI medical assistant with access to up-to-date medical liter
 IMPORTANT: If a user describes symptoms that suggest a medical emergency (such as signs of heart attack, stroke, severe bleeding, difficulty breathing, or severe allergic reaction), immediately advise them to seek emergency medical care.
 """
 
-
 class MedicalAgent:
-    """Medical diagnostic agent implementation"""
-    
+    """Medical diagnostic agent implementation (local only)"""
     def __init__(self, gemini_api_key: str, perplexity_api_key: str, model_name: str = "gemini-1.5-pro"):
-        """Initialize the medical agent"""
+        """Initialize the medical agent with LLM and research tools"""
         # LLM Configuration
         self.llm = ChatGoogleGenerativeAI(
             model=model_name,
             google_api_key=gemini_api_key,
             temperature=0.3
         )
-        
         # Bind tools
         self.tools = [perplexity_research]
         self.llm_with_tools = self.llm.bind_tools(tools=self.tools)
-        
         # Build the graph
         self.graph = self._build_graph()
     
