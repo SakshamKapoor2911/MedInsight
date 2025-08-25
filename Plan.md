@@ -2,44 +2,46 @@
 
 This document outlines a 15-day, phase-based plan to build the MedLama platform—a cloud-native, microservices-based system for AI-powered medical diagnostics. The plan is inspired by enterprise engineering practices and rapid AI-driven development, and is structured to reflect the modular architecture described in the README.
 
+## Local Development & Zero-Cost Testing
+- [ ] All services can be run and tested locally using Docker Compose
+- [ ] Use local emulators/mocks for cloud dependencies (Google Pub/Sub Emulator, MongoDB local, NVIDIA NIM mock/CPU mode, etc.)
+- [ ] All tests (unit, integration, E2E) pass locally before cloud deployment
+
 ## Phase 1: Project Scaffolding & Infrastructure (Days 1-2)
-- [ ] Initialize repository and folder structure for all microservices:
-    - Go backend (`services/backend-service`): API gateway, Google Pub/Sub messaging, auth, DB ops
-    - Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration, NIM orchestration
-    - Angular frontend (`services/frontend`): UI, components, services, API integration
-- [ ] Set up Python virtual environment, Go module, and Node.js workspace
-- [ ] Add basic README, .gitignore, and requirements files for each service
-- [ ] Create Docker configuration for local development (all services)
-- [ ] Set up MongoDB (local or Atlas)
-- [ ] Scaffold deployment directory for Docker Compose, Kubernetes manifests, NIM configuration, and CI/CD
+- [x] Go backend (`services/backend-service`): API gateway, Google Pub/Sub messaging, DB ops
+- [x] Angular frontend (`services/frontend`): UI, components, services, API integration
+- [x] Python AI/ML service (`services/ai-service`): LangGraph agents, LLM integration, NIM orchestration
+- [x] Local development: All services run together via Docker Compose
+- [x] Local MongoDB instance for dev/testing
+- [x] Local Pub/Sub emulator for messaging
+- [x] AI/ML service can run in CPU/mock mode locally
+- [x] **Local Test Gate:** All health checks and basic unit tests pass locally
 
 ## Phase 2: Core Backend & AI/ML Services (Days 3-5)
-- [ ] Implement Go backend skeleton (API gateway, Google Pub/Sub messaging, authentication, DB ops)
-- [ ] Implement Python AI/ML service skeleton (FastAPI/Flask, LangGraph for conversation state)
-- [ ] Design NVIDIA NIM integration with Gemma 2 for self-hosted medical reasoning
-- [ ] Add endpoints for user authentication, conversation, and research
-- [ ] Connect both backend and AI/ML service to MongoDB for storing conversation history
-- [ ] Integrate Perplexity API for medical literature research and evidence gathering
-- [ ] Write unit tests for backend and AI/ML logic
+- [ ] Write unit tests for backend and AI/ML logic (covering all endpoints, message flows, and DB ops)
+- [ ] For AI/ML: Add basic accuracy and performance tests (e.g., ensure LLM returns medically plausible answers for sample prompts)
+- [ ] Local integration: Backend and AI/ML communicate via local Pub/Sub emulator
+- [ ] All endpoints and flows tested locally with Docker Compose
+- [ ] **Local Test Gate:** All unit/integration/accuracy tests pass locally before cloud deployment
 
 ## Phase 3: Frontend Development (Days 6-8)
-- [ ] Scaffold Angular + TypeScript frontend using Angular CLI
-- [ ] Implement authentication screens and chat UI with Angular components and services
-- [ ] Connect frontend to backend API (REST/WebSocket)
-- [ ] Add real-time updates for chat and notifications
-- [ ] Style with modern, responsive design
-- [ ] Write frontend unit tests (Karma/Jasmine)
+- [ ] Write frontend unit tests (Karma/Jasmine) for all components and services
+- [ ] Validate UI against sample medical chat flows to ensure correct rendering and state
+- [ ] Local integration: Frontend connects to backend via Docker Compose
+- [ ] Real-time updates tested locally
+- [ ] **Local Test Gate:** All frontend tests and flows validated locally
 
 ## Phase 4: Real-time Features (Days 9-10)
-- [ ] Implement WebSocket support for live chat and alerts (Go backend, Angular frontend)
-- [ ] Integrate notification/alert system (backend, AI/ML, frontend)
-- [ ] Write integration tests for real-time flows
+- [ ] Real-time chat and notifications tested with local Docker Compose setup
+- [ ] Use local emulators/mocks for all messaging and notification flows
+- [ ] **Local Test Gate:** Real-time features validated locally before cloud deployment
 
-## Phase 5: Testing & Quality Assurance (Days 11-12)
-- [ ] Achieve >80% unit test coverage (Go backend, Python AI/ML, Angular frontend)
-- [ ] Implement integration tests for critical user journeys (all services)
-- [ ] Add end-to-end tests (Cypress or Protractor)
-- [ ] Perform security and privacy review (data privacy, secure auth, encrypted storage)
+## Phase 5: Authentication & Security (Days 11-12)
+- [ ] Implement user authentication (Go backend, Angular frontend)
+- [ ] Add secure auth screens and backend logic
+- [ ] Enforce encrypted storage for sensitive data
+- [ ] Local authentication and security flows tested with Docker Compose
+- [ ] **Local Test Gate:** Auth and security features validated locally before cloud deployment
 
 ## Phase 6: Cloud/Deployment & Monitoring (Days 13-14)
 - [ ] Containerize all microservices (Go backend, Python AI/ML, Angular frontend) with Docker
@@ -48,6 +50,7 @@ This document outlines a 15-day, phase-based plan to build the MedLama platform�
 - [ ] Prepare Kubernetes manifests for all services deployment
 - [ ] Set up Cloud Build for CI/CD pipeline and automated deployments
 - [ ] Configure Google Cloud Operations for monitoring, logging, and alerting
+- [ ] **Local Test Gate:** All services must be deployable and observable locally before cloud deployment
 
 ## Phase 7: Documentation & Final Review (Day 15)
 - [ ] Update README and API documentation (Swagger/OpenAPI)
@@ -55,72 +58,20 @@ This document outlines a 15-day, phase-based plan to build the MedLama platform�
 - [ ] Document engineering decisions and patterns
 - [ ] Conduct UI/UX and code quality review (Angular best practices)
 - [ ] Final polish and project handoff
+- [ ] **Local Test Gate:** Documentation and final tests validated locally before cloud deployment
 
 ---
+## Success Criteria: MVP & Demo Acceptance
 
-## 🚀 Immediate Implementation Action Items
-*Priority order for transitioning from current monolithic structure to planned microservices architecture*
-
-### Action Item 1: Create the Proper Folder Structure ⚡ **[START HERE]**
-**Current State**: Monolithic Flask app with mixed concerns (app.py, llm.py, multiturn.py in root)
-**Target State**: Clean microservices separation as documented in README
-**Details**:
-- Create `services/` directory with subdirectories for `backend-service/`, `ai-service/`, `frontend/`
-- Create `deployment/` directory for Docker Compose, K8s manifests, NIM configs
-- Create `scripts/` directory for utility scripts
-- Preserve existing files temporarily while setting up new structure
-
-### Action Item 2: Refactor Existing LLM Code into New AI/ML Service Structure
-**Current State**: LangGraph implementation in `llm.py` and `multiturn.py` at project root
-**Target State**: Organized Python AI/ML service in `services/ai-service/`
-**Details**:
-- Move and restructure LangGraph agents, conversation state management
-- Organize as proper Python package: `/api` (FastAPI/Flask endpoints), `/agents` (LangGraph), `/models` (NIM integration), `/utils`
-- Update imports and dependencies for new structure
-- Integrate Gemma 2 via NVIDIA NIM for medical reasoning, keep Perplexity for research
-- Update requirements.txt for the AI service
-
-### Action Item 3: Set up Basic Go API Gateway
-**Current State**: No Go backend exists
-**Target State**: High-performance Go API gateway in `services/backend-service/`
-**Details**:
-- Create Go module structure with `/cmd` (main.go), `/internal` (api, pubsub, auth, db), `/pkg`
-- Use lightweight framework (Gin or Echo) for REST/WebSocket handling
-- Implement Google Pub/Sub messaging integration for AI service communication
-- Add authentication and MongoDB database operations
-- Create basic health check and API endpoints
-
-### Action Item 4: Set up Basic Angular Frontend
-**Current State**: Next.js/React components in `medLama/` directory
-**Target State**: Modern Angular application in `services/frontend/`
-**Details**:
-- Initialize new Angular project using Angular CLI
-- Migrate UI concepts from existing React components to Angular components
-- Set up project structure: `/src/app/components`, `/services`, `/models`
-- Implement authentication screens and chat UI with Angular best practices
-- Connect to Go backend API via HTTP services and WebSocket integration
-
-### Action Item 5: Create Docker and Kubernetes Configurations
-**Current State**: No containerization or orchestration configs
-**Target State**: Complete containerization and GKE deployment setup
-**Details**:
-- Create Dockerfiles for each service (Go backend, Python AI/ML, Angular frontend)
-- Set up Docker Compose for local development environment
-- Create Kubernetes manifests for GKE deployment in `deployment/` directory
-- Configure NVIDIA NIM deployment with Gemma 2 model on GPU node pool
-- Set up Cloud Build CI/CD pipeline configuration
+- [ ] User can chat with the AI agent via the frontend and receive real-time responses (locally and in cloud)
+- [ ] Conversation history is stored and retrievable from MongoDB (local and cloud)
+- [ ] AI/ML service provides medically plausible answers and passes accuracy checks (locally and in cloud)
+- [ ] Real-time notifications and alerts are delivered reliably (locally and in cloud)
+- [ ] All core services (Go backend, Python AI/ML, Angular frontend) are containerized and run together locally (Docker Compose) and on GKE
+- [ ] All test gates for Phases 1-4 are passed (unit, integration, performance, accuracy) locally before cloud deployment
+- [ ] Demo is ready for review by Google Health or stakeholders
 
 ---
-
-## Development Approach
-- Daily check-ins and progress tracking
-- Test-driven development for critical components
-- Focus on modular, scalable, and secure design
-- Clear separation of Go backend, Python AI/ML, and frontend services for team scalability
-- Containerization and cloud-native deployment
-
-
-
 ## Best Practices for Solo Development, Testing, and Integration
 
 **Development Workflow**
@@ -144,6 +95,5 @@ This document outlines a 15-day, phase-based plan to build the MedLama platform�
 - Refactor code regularly to keep it clean and maintainable.
 - Take notes on engineering decisions and architectural changes.
 - Use AI tools for code review, suggestions, and troubleshooting.
-
 
 *And most importantly, build with ❤️ to organize the world’s healthcare information, making it universally accessible and useful.*

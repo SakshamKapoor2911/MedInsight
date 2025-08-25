@@ -251,14 +251,26 @@ Full_stack_Medical_Diagnostics/
     ng test
     ```
 
-## 🎯 Industry-Aligned Features
-| Focus Area                | Implementation Example                        | Why It Matters                                 |
-|---------------------------|-----------------------------------------------|------------------------------------------------|
-| Conversational AI         | Multi-turn, context-aware agent               | Simulates real consultations                   |
-| Data Privacy & Security   | Encrypted storage, secure auth                | Regulatory compliance, user trust              |
-| Scalable Microservices    | Modular Go/Python backend, containerized deployment | Handles high concurrency, easy to extend   |
-| Modern UX                 | Angular, responsive design                    | User engagement, accessibility                 |
+## 🧪 Test-Driven Development Approach
 
+MedLama is built with strict test-driven development (TDD) principles:
+- **Unit, integration, and end-to-end tests are required at every major phase.**
+- **Test gates:** No phase is considered complete until all new features pass their respective tests.
+- **Performance and accuracy:** AI/ML components are validated with benchmarks and truthfulness checks to ensure reliable medical reasoning.
+- **Continuous integration:** Automated test runners (Go, Pytest, Karma/Jest, Cypress) are used before every major commit and deployment.
+
+This approach ensures that every part of the system is robust, scalable, and ready for real-world healthcare use.
+
+## 🎯 Google-Aligned Features
+| Google Focus Area      | MedLama Implementation Example                  | Why It Matters                                  |
+|------------------------------|-------------------------------------------------|-------------------------------------------------|
+| Cloud-Native Microservices   | GKE, containerized Go/Python/Angular services   | Scalable, resilient, and easy to manage         |
+| Data Privacy & Security      | Self-hosted AI, encrypted storage, secure auth  | Regulatory compliance, patient trust            |
+| AI-Driven Diagnostics        | LangGraph agents, Gemma 2, NVIDIA NIM           | Advanced, context-aware medical reasoning       |
+| Real-Time Collaboration      | WebSockets, live chat, notifications            | Enables responsive, interactive consultations   |
+| Modern UX & Accessibility    | Angular, responsive design                      | Improves patient engagement and accessibility   |
+| Evidence-Based Medicine      | Perplexity API for literature research          | Supports clinical accuracy and transparency     |
+| DevOps & Monitoring          | Cloud Build, Cloud Operations, CI/CD            | Reliable deployments and system health          |
 
 ### Why MedLama Appeals to Google Health
 - Demonstrates scalable, AI-driven healthcare solutions
